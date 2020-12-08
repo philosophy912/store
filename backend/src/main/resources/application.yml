@@ -1,0 +1,54 @@
+server:
+  port: 8080
+
+
+logging:
+  level:
+    root: info
+    com.sophia.store.service: info
+    com.sophia.store.controller: info
+    com.sophia.store.config: info
+    com.sophia.store.utils: info
+
+spring:
+  application:
+    name: springfox-swagger
+  servlet:
+    multipart:
+      # 是否开启文件上传自动配置，默认开启。
+      enabled: true
+      # 上传文件的临时目录。
+      location: /images
+      # 最大文件大小，以字节为单位，默认为1M。
+      max-file-size: 10MB
+      # 整个请求的最大容量，默认为10M。
+      max-request-size: 10MB
+      # 文件大小达到该阈值，将写入临时目录，默认为0，即所有文件都会直接写入磁盘临时文件中。
+      file-size-threshold: 0
+      # 是否惰性处理请求，默认为false
+      resolve-lazily: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/store?setUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    username: root
+    password: root
+    # url: jdbc:mysql://10.100.193.82:9999/store?setUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    # username: root
+    # password: chinatsp
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+    database: mysql
+
+# upload_file: D:/Workspace/github/device_manage/backend/upload_file/
+upload_file: E:/Work/device_manage/backend/upload_file/
+
+swagger:
+  enable: false
+  application-name: ${spring.application.name}
+  application-version: 1.0.0
+  application-description: 设备管理系统
+  try-host: http://localhost:${server.port}
