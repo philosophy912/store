@@ -47,9 +47,16 @@ public class Food {
     @Column(name = "expire_date")
     @ApiModelProperty(value = "过期日期")
     private Long expireDate;
+    @Column(name = "image_url")
+    @ApiModelProperty(value = "图片地址")
+    private String imageUrl;
+    @Column(name = "description")
+    @ApiModelProperty(value = "相关描述")
+    private String description;
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, optional = false)
     @JoinColumn(name = "food_id")
     @ApiModelProperty(value = "类别")
     private Category category;
+
 
 }

@@ -26,6 +26,10 @@ public class FoodVo {
     private Long inDate;
     @ApiModelProperty(value = "过期日期")
     private Long expireDate;
+    @ApiModelProperty(value = "图片地址")
+    private String imageUrl;
+    @ApiModelProperty(value = "描述")
+    private String description;
     @ApiModelProperty(value = "分类ID")
     private Integer categoryId;
     @ApiModelProperty(value = "分类名称")

@@ -38,6 +38,12 @@ public class FoodServiceImpl implements FoodService {
         if (null != food.getExpireDate()) {
             vo.setExpireDate(food.getExpireDate());
         }
+        if (null != food.getImageUrl()) {
+            vo.setImageUrl(food.getImageUrl());
+        }
+        if (null != food.getDescription()) {
+            vo.setDescription(food.getDescription());
+        }
         return vo;
     }
 
@@ -56,7 +62,13 @@ public class FoodServiceImpl implements FoodService {
         Category category = optionalCategory.orElseGet(optionalCategory::get);
         food.setCategory(category);
         if (null != vo.getExpireDate()) {
-            food.setExpireDate(food.getExpireDate());
+            food.setExpireDate(vo.getExpireDate());
+        }
+        if (null != vo.getDescription()) {
+            food.setDescription(vo.getDescription());
+        }
+        if (null != vo.getImageUrl()) {
+            food.setImageUrl(vo.getImageUrl());
         }
         food.setCount(vo.getCount());
         food.setRestCount(vo.getRestCount());
