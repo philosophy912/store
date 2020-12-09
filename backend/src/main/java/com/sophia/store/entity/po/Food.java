@@ -6,11 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -34,15 +37,19 @@ public class Food {
     private String name;
     @Column(name = "count", nullable = false)
     @ApiModelProperty(value = "总数量")
-    private Integer count;
+    private Float count;
     @Column(name = "rest_count", nullable = false)
     @ApiModelProperty(value = "剩余数量")
-    private Integer restCount;
+    private Float restCount;
     @Column(name = "in_date", nullable = false)
     @ApiModelProperty(value = "购买日期")
     private Long inDate;
-    @Column(name = "expire_date", nullable = false)
+    @Column(name = "expire_date")
     @ApiModelProperty(value = "过期日期")
     private Long expireDate;
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, optional = false)
+    @JoinColumn(name = "food_id")
+    @ApiModelProperty(value = "类别")
+    private Category category;
 
 }
