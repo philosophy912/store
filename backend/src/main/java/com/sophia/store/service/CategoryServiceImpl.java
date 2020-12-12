@@ -1,8 +1,8 @@
 package com.sophia.store.service;
 
 import com.philosophy.base.util.StringsUtils;
-import com.sophia.store.dao.CategoryDao;
 import com.sophia.store.entity.po.Category;
+import com.sophia.store.entity.po.Food;
 import com.sophia.store.entity.vo.CategoryVo;
 import com.sophia.store.utils.Constant;
 import com.sophia.store.utils.ObjectUtils;
@@ -12,46 +12,22 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Slf4j
-public class CategoryServiceImpl implements CategoryService {
-    @Resource
-    private CategoryDao categoryDao;
+public class CategoryServiceImpl extends BaseService implements CategoryService {
 
-    private CategoryVo convert(Category category) {
-        CategoryVo vo = new CategoryVo();
-        vo.setId(category.getId());
-        vo.setName(category.getName());
-        vo.setNeedExpire(category.getNeedExpire());
-        vo.setFoods(category.getFoods());
-        return vo;
-    }
-
-    private Category convert(CategoryVo vo, String type) {
-        Category category = new Category();
-        // 更新的时候需要ID
-        if (type.equalsIgnoreCase(Constant.UPDATE)) {
-            category.setId(vo.getId());
-        }
-        category.setName(vo.getName());
-        category.setNeedExpire(vo.getNeedExpire());
-        if (null != vo.getFoods()) {
-            category.setFoods(vo.getFoods());
-        }
-        return category;
-    }
 
     @Override
     public List<CategoryVo> findAllCategories() {
         List<CategoryVo> categoryVos = new ArrayList<>();
         List<Category> categories = categoryDao.findAll();
-        categories.forEach(category -> categoryVos.add(convert(category)));
+        categories.forEach(category -> categoryVos.add(convertCategory(category)));
         return categoryVos;
     }
 
@@ -68,7 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
             query.where(queryList.toArray(new Predicate[0]));
             return null;
         }, pageable);
-        categories.forEach(category -> categoryVos.add(convert(category)));
+        categories.forEach(category -> categoryVos.add(convertCategory(category)));
         return categoryVos;
     }
 
@@ -86,22 +62,42 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryVo addCategory(CategoryVo vo) {
         List<Category> categories = categoryDao.findByName(vo.getName());
         if (categories.size() == 0) {
-            Category category = convert(vo, Constant.CREATE);
+            Category category = new Category();
+            category.setName(vo.getName());
+            category.setNeedExpire(vo.getNeedExpire());
             Category dpt = categoryDao.saveAndFlush(category);
-            return convert(dpt);
+            return convertCategory(dpt);
         }
         return null;
     }
 
     @Override
     public CategoryVo updateCategory(CategoryVo vo) {
-        Category originDepartment = convert(vo, Constant.UPDATE);
-        Optional<Category> optionalCategory = categoryDao.findById(vo.getId());
-        Category category = optionalCategory.orElseGet(optionalCategory::get);
-        ObjectUtils.copyFiledValue(originDepartment, category);
-        log.debug("update category and category is {}", category);
-        categoryDao.saveAndFlush(category);
-        return vo;
+        String name = vo.getName();
+        log.debug("update category vo is {}", vo);
+        List<Category> categories = categoryDao.findByName(name);
+        if (categories.size() == 0) {
+            // 根据vo查询category
+            Optional<Category> optionalCategory = categoryDao.findById(vo.getId());
+            Category category = optionalCategory.orElseGet(optionalCategory::get);
+            if (category.getNeedExpire() != vo.getNeedExpire()) {
+                // 当前分类下的食品分类不为空且有一个食品的过期时间不为空
+                category.getFoods().forEach(food -> {
+                    if (null != food.getExpireDate()) {
+                        String error = "当前分类下有耗材，无法修改过期时间";
+                        throw new RuntimeException(error);
+                    }
+                });
+            }
+            category.setName(name);
+            category.setNeedExpire(vo.getNeedExpire());
+            log.debug("update category and category is {}", category);
+            log.debug("update category and category food is {}", category.getFoods());
+            categoryDao.saveAndFlush(category);
+            return vo;
+        }
+        String error = "当前已存在分类名【" + name + "】";
+        throw new RuntimeException(error);
     }
 
     @Override
@@ -119,7 +115,7 @@ public class CategoryServiceImpl implements CategoryService {
         String name = vo.getName();
         List<Category> categories = categoryDao.findByName(name);
         List<CategoryVo> categoryVos = new ArrayList<>();
-        categories.forEach(category -> categoryVos.add(convert(category)));
+        categories.forEach(category -> categoryVos.add(convertCategory(category)));
         return categoryVos;
     }
 }

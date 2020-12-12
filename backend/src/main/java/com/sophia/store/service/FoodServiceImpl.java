@@ -1,9 +1,7 @@
 package com.sophia.store.service;
 
 import com.philosophy.base.util.StringsUtils;
-import com.sophia.store.dao.CategoryDao;
 import com.sophia.store.dao.FoodDao;
-import com.sophia.store.entity.po.Category;
 import com.sophia.store.entity.po.Food;
 import com.sophia.store.entity.vo.FoodVo;
 import com.sophia.store.utils.Constant;
@@ -22,59 +20,9 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class FoodServiceImpl implements FoodService {
+public class FoodServiceImpl extends BaseService implements FoodService {
     @Resource
     private FoodDao foodDao;
-    @Resource
-    private CategoryDao categoryDao;
-
-    private FoodVo convert(Food food) {
-        FoodVo vo = new FoodVo();
-        vo.setId(food.getId());
-        vo.setName(food.getName());
-        vo.setCount(food.getCount());
-        vo.setRestCount(food.getRestCount());
-        vo.setInDate(food.getInDate());
-        if (null != food.getExpireDate()) {
-            vo.setExpireDate(food.getExpireDate());
-        }
-        if (null != food.getImageUrl()) {
-            vo.setImageUrl(food.getImageUrl());
-        }
-        if (null != food.getDescription()) {
-            vo.setDescription(food.getDescription());
-        }
-        return vo;
-    }
-
-    private Food convert(FoodVo vo, String type) {
-        Food food = new Food();
-        // 更新的时候需要ID
-        if (type.equalsIgnoreCase(Constant.UPDATE)) {
-            food.setId(vo.getId());
-        }
-        food.setName(vo.getName());
-        // 创建的时候需要时间
-        if (type.equalsIgnoreCase(Constant.CREATE)) {
-            food.setInDate(vo.getInDate());
-        }
-        Optional<Category> optionalCategory = categoryDao.findById(vo.getCategoryId());
-        Category category = optionalCategory.orElseGet(optionalCategory::get);
-        food.setCategory(category);
-        if (null != vo.getExpireDate()) {
-            food.setExpireDate(vo.getExpireDate());
-        }
-        if (null != vo.getDescription()) {
-            food.setDescription(vo.getDescription());
-        }
-        if (null != vo.getImageUrl()) {
-            food.setImageUrl(vo.getImageUrl());
-        }
-        food.setCount(vo.getCount());
-        food.setRestCount(vo.getRestCount());
-        return food;
-    }
-
 
     @Override
     public List<FoodVo> findFood(Pageable pageable, String name) {
@@ -89,7 +37,7 @@ public class FoodServiceImpl implements FoodService {
             query.where(queryList.toArray(new Predicate[0]));
             return null;
         }, pageable);
-        foods.forEach(food -> foodVos.add(convert(food)));
+        foods.forEach(food -> foodVos.add(convertFood(food)));
         return foodVos;
     }
 
@@ -107,16 +55,16 @@ public class FoodServiceImpl implements FoodService {
     public FoodVo addFood(FoodVo vo) {
         List<Food> foods = foodDao.findByName(vo.getName());
         if (foods.size() == 0) {
-            Food food = convert(vo, Constant.CREATE);
+            Food food = convertFood(vo, Constant.CREATE);
             Food dpt = foodDao.saveAndFlush(food);
-            return convert(dpt);
+            return convertFood(dpt);
         }
         return null;
     }
 
     @Override
     public FoodVo updateFood(FoodVo vo) {
-        Food originFood = convert(vo, Constant.UPDATE);
+        Food originFood = convertFood(vo, Constant.UPDATE);
         Optional<Food> optionalFood = foodDao.findById(vo.getId());
         Food food = optionalFood.orElseGet(optionalFood::get);
         ObjectUtils.copyFiledValue(originFood, food);

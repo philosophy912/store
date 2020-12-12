@@ -21,7 +21,7 @@ public class CategoryVo {
     @ApiModelProperty(value = "设备名称", required = true)
     private String name;
     @ApiModelProperty(value = "耗材列表")
-    private Set<Food> foods;
+    private Set<FoodVo> foods;
     @ApiModelProperty(value = "是否需要填写过期日期")
     private Boolean needExpire;
 }

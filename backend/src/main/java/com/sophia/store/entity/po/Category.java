@@ -4,7 +4,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -22,7 +24,8 @@ import java.util.Set;
  * @author lizhe
  * @date 2020/12/9 14:57
  **/
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -40,7 +43,12 @@ public class Category {
     @Column(name = "need_expire", nullable = false)
     @ApiModelProperty(value = "是否需要填写过期日期")
     private Boolean needExpire;
-    @OneToMany(mappedBy = "category", cascade={CascadeType.MERGE, CascadeType.REFRESH},fetch= FetchType.LAZY)
+    @OneToMany(
+            mappedBy = "category",
+            cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST},
+            fetch = FetchType.LAZY
+    )
     @ApiModelProperty(value = "分类下所有的材料")
     private Set<Food> foods = new HashSet<>();
+
 }

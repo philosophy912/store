@@ -53,7 +53,10 @@ public class Food {
     @Column(name = "description")
     @ApiModelProperty(value = "相关描述")
     private String description;
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, optional = false)
+    @ManyToOne(
+            cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST},
+            optional = false
+    )
     @JoinColumn(name = "food_id")
     @ApiModelProperty(value = "类别")
     private Category category;

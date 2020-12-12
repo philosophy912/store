@@ -128,7 +128,7 @@ public class CategoryController {
             }
         } catch (Exception e) {
             response.setCode(Constant.NOK);
-            response.setMessage("更新失败");
+            response.setMessage("更新失败, 错误原因【" + e.getMessage() + "】");
             response.setErrorInfo(e.getMessage());
         }
         return response;
@@ -150,7 +150,7 @@ public class CategoryController {
             }
         } catch (DataIntegrityViolationException e) {
             response.setCode(Constant.NOK);
-            response.setMessage("删除失败，部门" + name + "中仍然存在员工");
+            response.setMessage("删除失败，分类" + name + "中仍然存在耗材");
             response.setErrorInfo(e.getMessage());
         } catch (Exception e) {
             response.setCode(Constant.NOK);
