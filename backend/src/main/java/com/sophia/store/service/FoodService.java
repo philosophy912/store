@@ -9,6 +9,8 @@ public interface FoodService {
     
     List<FoodVo> findFood(Pageable pageable, String name);
 
+    List<FoodVo> findFood(Pageable pageable, String name, Integer categoryId);
+
     long findAllFoodCount();
 
     long findFoodCountByName(String name);
@@ -18,4 +20,6 @@ public interface FoodService {
     FoodVo updateFood(FoodVo vo);
 
     FoodVo deleteFood(FoodVo vo);
+
+    FoodVo useFood(FoodVo vo);
 }

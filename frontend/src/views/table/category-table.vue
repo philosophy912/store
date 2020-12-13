@@ -109,7 +109,7 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
+        limit: 10,
         name: undefined,
         sort: '+id'
       },
@@ -120,7 +120,8 @@ export default {
       showReviewer: false,
       temp: {
         id: undefined,
-        name: undefined
+        name: undefined,
+        needExpire: false
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -132,7 +133,7 @@ export default {
       pvData: [],
       rules: {
         name: [{ required: true, trigger: 'blur', validator: isNameValid }],
-        needExpire: [{ required: true }]
+        needExpire: [{ required: true, trigger: 'change' }]
       },
       downloadLoading: false
     }
@@ -177,7 +178,8 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        name: undefined
+        name: undefined,
+        needExpire: false
       }
     },
     handleCreate() {

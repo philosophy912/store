@@ -3,7 +3,11 @@
     <div class="filter-container">
       <el-input v-model="listQuery.name" placeholder="请输入耗材名字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查找</el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
+      <el-select v-model="temp.categoryId" placeholder="请选择" @change="changeCategory">
+        <!-- label是文字，value是值 -->
+        <el-option v-for="item in categories" :key="item.id" :label="item.name" :value="item.id" />
+      </el-select>
+      <!-- <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button> -->
     </div>
 
     <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;" @sort-change="sortChange">
@@ -54,10 +58,10 @@
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">编辑</el-button>
+        <template slot-scope="{row}">
+          <el-button type="primary" size="mini" @click="handleUpdate(row)">使用</el-button>
           <!-- <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleUse(row)">使用</el-button> -->
-          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">删除</el-button>
+          <!-- <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">删除</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -67,46 +71,13 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" @close="closeDialog">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
         <el-form-item label="名字" prop="name">
-          <el-input v-model="temp.name" />
+          <el-input v-model="temp.name" :disabled="true" />
         </el-form-item>
-        <el-form-item label="总量" prop="count">
-          <el-input v-model="temp.count" />
+        <el-form-item label="剩余量" prop="restCount">
+          <el-input v-model="temp.restCount" :disabled="true" />
         </el-form-item>
-        <el-form-item label="图片" prop="image">
-          <el-upload
-            ref="upload"
-            class="avatar-uploader"
-            drag
-            action="http://127.0.0.1:8080/upload"
-            list-type="picture"
-            accept="image/png, image/jpeg, image/gif, image/bmp"
-            :show-file-list="false"
-            :file-list="temp.images"
-            :limit="1"
-            :on-success="handleOnSuccess"
-            :before-upload="beforeUpload"
-          >
-            <img v-if="temp.imageUrl" width="100%" height="100%" :src="temp.imageUrl" class="avatar" @click="clearFiles">
-            <div v-else>
-              <i class="el-icon-upload" />
-              <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-            </div>
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="所属分类" prop="categories">
-          <el-select v-model="temp.categoryId" placeholder="请选择" @change="changeCategory">
-            <!-- label是文字，value是值 -->
-            <el-option v-for="item in categories" :key="item.id" :label="item.name" :value="item.id" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="购买时间" prop="inDate">
-          <el-date-picker v-model="temp.inDate" type="datetime" placeholder="请选择日期" />
-        </el-form-item>
-        <el-form-item v-show="temp.expireDate" label="过期时间" prop="expireDate">
-          <el-date-picker v-model="temp.expireDate" type="datetime" placeholder="请选择日期" />
-        </el-form-item>
-        <el-form-item label="详情" prop="description">
-          <el-input v-model="temp.description" :rows="5" type="textarea" />
+        <el-form-item label="本次使用" prop="useCount">
+          <el-input v-model="temp.useCount" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -142,7 +113,7 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 }, {})
 
 export default {
-  name: 'FoodTable',
+  name: 'FoodUseTable',
   components: { Pagination },
   beforeRouteEnter(to, from, next) {
     next(vm => {
@@ -175,6 +146,7 @@ export default {
         page: 1,
         limit: 10,
         name: undefined,
+        categoryId: undefined,
         sort: '+id'
       },
       importanceOptions: [1, 2, 3],
@@ -187,6 +159,7 @@ export default {
         name: undefined,
         count: 0,
         restCount: 0,
+        useCount: 0,
         inDate: new Date(),
         expireDate: undefined,
         imageUrl: undefined,
@@ -225,6 +198,7 @@ export default {
         this.total = response.totalRows
         this.listLoading = false
       })
+      this.getCategories()
     },
     handleFilter() {
       this.listQuery.page = 1
@@ -257,6 +231,7 @@ export default {
         name: undefined,
         count: 0,
         restCount: 0,
+        useCount: 0,
         inDate: new Date(),
         expireDate: undefined,
         imageUrl: undefined,
@@ -306,8 +281,6 @@ export default {
       this.showExprie = false
       this.getCategories()
       this.temp = Object.assign({}, row) // copy obj
-      log.debug('this.temp value is ' + JSON.stringify(this.temp))
-      this.showSelectExpire(this.temp.categoryId)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -318,21 +291,34 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          tempData.inDate = +new Date(tempData.inDate)
-          tempData.expireDate = +new Date(tempData.expireDate)
-          updateFood(tempData).then(() => {
+          // 使用数量大于剩余数量
+          if (this.temp.useCount > this.temp.restCount) {
             this.dialogFormVisible = false
             this.$notify({
-              title: '成功',
-              message: '更新耗材【' + tempData.name + '】成功',
-              type: 'success',
+              title: '失败',
+              message: '[' + tempData.name + ']仅剩余[' + tempData.restCount + ']份, 但要使用 [' + tempData.useCount + ']份',
+              type: 'error',
               duration: 2000
             })
             this.getList()
-          }).catch(() => {
-            this.dialogFormVisible = false
-            this.getList()
-          })
+          } else {
+            tempData.inDate = +new Date(tempData.inDate)
+            tempData.expireDate = +new Date(tempData.expireDate)
+            tempData.restCount = tempData.count - tempData.useCount
+            updateFood(tempData).then(() => {
+              this.dialogFormVisible = false
+              this.$notify({
+                title: '成功',
+                message: '更新耗材【' + tempData.name + '】成功',
+                type: 'success',
+                duration: 2000
+              })
+              this.getList()
+            }).catch(() => {
+              this.dialogFormVisible = false
+              this.getList()
+            })
+          }
         }
       })
     },
@@ -429,22 +415,9 @@ export default {
       this.$refs.upload.clearFiles()
     },
     changeCategory(value) {
-      log.debug('category value is ' + JSON.stringify(value))
-      this.showSelectExpire(value)
-    },
-    showSelectExpire(value) {
-      log.debug('value is ' + JSON.stringify(value))
-      log.debug('categories is ' + JSON.stringify(this.categories))
-      this.categories.forEach(category => {
-        if (category.id === value) {
-          log.info('showSelectExpire category is ' + JSON.stringify(category))
-          if (category.needExpire) {
-            this.temp.expireDate = new Date()
-          } else {
-            this.temp.expireDate = undefined
-          }
-        }
-      })
+      log.info('category value is ' + JSON.stringify(value))
+      this.listQuery.categoryId = value.id
+      this.getList()
     },
     closeDialog() {
       this.clearFiles()

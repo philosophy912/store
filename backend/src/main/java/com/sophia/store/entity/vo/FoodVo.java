@@ -33,5 +33,5 @@ public class FoodVo {
     @ApiModelProperty(value = "分类ID")
     private Integer categoryId;
     @ApiModelProperty(value = "分类名称")
-    private Integer categoryName;
+    private String categoryName;
 }

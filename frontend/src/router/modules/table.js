@@ -23,6 +23,12 @@ const tableRouter = {
       component: () => import('@/views/table/food-table'),
       name: 'FoodTable',
       meta: { title: '耗材管理' }
+    },
+    {
+      path: 'food-use-table',
+      component: () => import('@/views/table/food-use-table'),
+      name: 'FoodUseTable',
+      meta: { title: '耗材使用' }
     }
     // {
     //   path: 'drag-table',

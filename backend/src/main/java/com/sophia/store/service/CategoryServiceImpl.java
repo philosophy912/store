@@ -2,10 +2,7 @@ package com.sophia.store.service;
 
 import com.philosophy.base.util.StringsUtils;
 import com.sophia.store.entity.po.Category;
-import com.sophia.store.entity.po.Food;
 import com.sophia.store.entity.vo.CategoryVo;
-import com.sophia.store.utils.Constant;
-import com.sophia.store.utils.ObjectUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +13,6 @@ import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @Slf4j
@@ -27,7 +23,7 @@ public class CategoryServiceImpl extends BaseService implements CategoryService 
     public List<CategoryVo> findAllCategories() {
         List<CategoryVo> categoryVos = new ArrayList<>();
         List<Category> categories = categoryDao.findAll();
-        categories.forEach(category -> categoryVos.add(convertCategory(category)));
+        categories.forEach(category -> categoryVos.add(convertCategoryWithoutFood(category)));
         return categoryVos;
     }
 
@@ -76,10 +72,11 @@ public class CategoryServiceImpl extends BaseService implements CategoryService 
         String name = vo.getName();
         log.debug("update category vo is {}", vo);
         List<Category> categories = categoryDao.findByName(name);
-        if (categories.size() == 0) {
+        if (categories.size() > 0) {
             // 根据vo查询category
             Optional<Category> optionalCategory = categoryDao.findById(vo.getId());
             Category category = optionalCategory.orElseGet(optionalCategory::get);
+            log.debug("vo expire[{}] and category expire[{}]", vo.getNeedExpire(), category.getNeedExpire());
             if (category.getNeedExpire() != vo.getNeedExpire()) {
                 // 当前分类下的食品分类不为空且有一个食品的过期时间不为空
                 category.getFoods().forEach(food -> {

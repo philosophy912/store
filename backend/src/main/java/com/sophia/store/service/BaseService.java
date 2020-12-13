@@ -33,6 +33,9 @@ public abstract class BaseService {
         if (null != food.getDescription()) {
             vo.setDescription(food.getDescription());
         }
+        Category category = food.getCategory();
+        vo.setCategoryId(category.getId());
+        vo.setCategoryName(category.getName());
         return vo;
     }
 
@@ -72,6 +75,14 @@ public abstract class BaseService {
         Set<FoodVo> foodVoSet = new HashSet<>();
         category.getFoods().forEach(food -> foodVoSet.add(convertFood(food)));
         vo.setFoods(foodVoSet);
+        return vo;
+    }
+
+    protected CategoryVo convertCategoryWithoutFood(Category category) {
+        CategoryVo vo = new CategoryVo();
+        vo.setId(category.getId());
+        vo.setName(category.getName());
+        vo.setNeedExpire(category.getNeedExpire());
         return vo;
     }
 

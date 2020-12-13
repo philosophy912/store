@@ -6,8 +6,8 @@ logging:
   level:
     root: info
     com.sophia.store.service: debug
-    com.sophia.store.controller: info
-    com.sophia.store.config: info
+    com.sophia.store.controller: debug
+    com.sophia.store.config: debug
     com.sophia.store.utils: debug
 
 spring:
@@ -43,8 +43,7 @@ spring:
         physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
     database: mysql
 
-# upload_file: D:/Workspace/github/device_manage/backend/upload_file/
-upload_file: E:/Work/device_manage/backend/upload_file/
+upload_file: E:/Work/store/backend/upload_file/
 
 swagger:
   enable: false

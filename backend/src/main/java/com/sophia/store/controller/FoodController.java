@@ -41,6 +41,7 @@ public class FoodController {
                                   @ApiParam(value = "每页数量", required = true, example = "10") @RequestParam int limit,
                                   @ApiParam(value = "查询的名字", example = "部门1") @RequestParam(required = false) String name,
                                   @ApiParam(value = "排序方式", example = "+id/-id") @RequestParam(required = false) String sort) {
+                                  // @ApiParam(value = "分类查询", example = "分类1") @RequestParam(required = false) int categoryId) {
         PageResponse response = new PageResponse();
         Pageable pageable;
         if (Strings.isNotEmpty(sort)) {
@@ -80,13 +81,8 @@ public class FoodController {
         String name = vo.getName();
         try {
             FoodVo foodVo = foodService.addFood(vo);
-            if (foodVo != null) {
-                response.setData(Collections.singletonList(vo));
-                response.setMessage("创建成功");
-            } else {
-                response.setCode(Constant.NOK);
-                response.setMessage(name + "已经在数据库中存在，无法添加");
-            }
+            response.setData(Collections.singletonList(foodVo));
+            response.setMessage("创建成功");
         } catch (Exception e) {
             response.setCode(Constant.NOK);
             response.setMessage("创建失败");
