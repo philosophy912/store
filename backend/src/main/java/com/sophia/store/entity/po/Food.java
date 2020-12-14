@@ -57,7 +57,7 @@ public class Food {
             cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST},
             optional = false
     )
-    @JoinColumn(name = "food_id")
+    @JoinColumn(name = "category_id")
     @ApiModelProperty(value = "类别")
     private Category category;
 

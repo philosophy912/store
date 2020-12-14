@@ -41,7 +41,6 @@ public class FoodController {
                                   @ApiParam(value = "每页数量", required = true, example = "10") @RequestParam int limit,
                                   @ApiParam(value = "查询的名字", example = "部门1") @RequestParam(required = false) String name,
                                   @ApiParam(value = "排序方式", example = "+id/-id") @RequestParam(required = false) String sort) {
-                                  // @ApiParam(value = "分类查询", example = "分类1") @RequestParam(required = false) int categoryId) {
         PageResponse response = new PageResponse();
         Pageable pageable;
         if (Strings.isNotEmpty(sort)) {
@@ -78,7 +77,6 @@ public class FoodController {
     @ApiOperation(value = "添加耗材", notes = "其中name和timestamp不能为空")
     public Response create(@RequestBody FoodVo vo) {
         Response response = new Response();
-        String name = vo.getName();
         try {
             FoodVo foodVo = foodService.addFood(vo);
             response.setData(Collections.singletonList(foodVo));

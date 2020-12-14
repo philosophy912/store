@@ -29,7 +29,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Categoty")
+@Table(name = "Category")
 @ApiModel(value = "一级分类")
 public class Category {
 
@@ -46,7 +46,7 @@ public class Category {
     @OneToMany(
             mappedBy = "category",
             cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST},
-            fetch = FetchType.LAZY
+            fetch = FetchType.EAGER
     )
     @ApiModelProperty(value = "分类下所有的材料")
     private Set<Food> foods = new HashSet<>();

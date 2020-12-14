@@ -6,6 +6,8 @@ import com.sophia.store.entity.po.Food;
 import com.sophia.store.entity.vo.CategoryVo;
 import com.sophia.store.entity.vo.FoodVo;
 import com.sophia.store.utils.Constant;
+import com.sophia.store.utils.ObjectUtils;
+import sun.util.resources.cldr.teo.CalendarData_teo_KE;
 
 import javax.annotation.Resource;
 import java.util.HashSet;
@@ -52,6 +54,11 @@ public abstract class BaseService {
         }
         Optional<Category> optionalCategory = categoryDao.findById(vo.getCategoryId());
         Category category = optionalCategory.orElseGet(optionalCategory::get);
+//        Category targetCategory = new Category();
+//        if(type.equalsIgnoreCase(Constant.CREATE)){
+//            targetCategory.setId(null);
+//        }
+//        ObjectUtils.copyFiledValue(category, targetCategory);
         food.setCategory(category);
         if (null != vo.getExpireDate()) {
             food.setExpireDate(vo.getExpireDate());

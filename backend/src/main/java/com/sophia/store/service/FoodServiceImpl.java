@@ -42,28 +42,6 @@ public class FoodServiceImpl extends BaseService implements FoodService {
         return foodVos;
     }
 
-    @Override
-    public List<FoodVo> findFood(Pageable pageable, String name, Integer categoryId) {
-        List<FoodVo> foodVos = new ArrayList<>();
-        log.info("categoryId = [{}]", categoryId);
-        Page<Food> foods = foodDao.findAll((Specification<Food>) (root, query, criteriaBuilder) -> {
-            // 1. 创建集合 存储查询条件
-            List<Predicate> queryList = new ArrayList<>();
-            // 2. 添加查询条件
-            if (StringsUtils.isNotEmpty(name)) {
-                queryList.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
-            }
-            if (null != categoryId) {
-                queryList.add(criteriaBuilder.equal(root.get("food_id"), categoryId));
-            }
-            queryList.add(criteriaBuilder.gt(root.get("restCount"), 0));
-            query.where(queryList.toArray(new Predicate[0]));
-            return null;
-        }, pageable);
-        foods.forEach(food -> foodVos.add(convertFood(food)));
-        return foodVos;
-    }
-
 
     @Override
     public long findAllFoodCount() {
@@ -77,13 +55,9 @@ public class FoodServiceImpl extends BaseService implements FoodService {
 
     @Override
     public FoodVo addFood(FoodVo vo) {
-        List<Food> foods = foodDao.findByName(vo.getName());
-        if (foods.size() == 0) {
-            Food food = convertFood(vo, Constant.CREATE);
-            Food dpt = foodDao.saveAndFlush(food);
-            return convertFood(dpt);
-        }
-        return null;
+        Food food = convertFood(vo, Constant.CREATE);
+        Food dpt = foodDao.saveAndFlush(food);
+        return convertFood(dpt);
     }
 
     @Override
@@ -107,14 +81,5 @@ public class FoodServiceImpl extends BaseService implements FoodService {
         return vo;
     }
 
-    @Override
-    public FoodVo useFood(FoodVo vo) {
-        Optional<Food> optionalFood = foodDao.findById(vo.getId());
-        Food food = optionalFood.orElseGet(optionalFood::get);
-        if (vo.getRestCount() - vo.getCount() > 0) {
-
-        }
-        return null;
-    }
 
 }
