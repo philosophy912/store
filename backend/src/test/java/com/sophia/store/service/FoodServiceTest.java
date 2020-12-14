@@ -53,4 +53,9 @@ class FoodServiceTest {
             service.addFood(foodVo);
         }
     }
+    @Test
+    void findFoodCountByNameAndCategoryId(){
+        long count = service.findFoodCountByNameAndCategoryId("%1%", 1);
+        System.out.println(count);
+    }
 }

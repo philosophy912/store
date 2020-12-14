@@ -40,7 +40,9 @@ public class FoodController {
     public PageResponse fetchList(@ApiParam(value = "页数", required = true, example = "1") @RequestParam int page,
                                   @ApiParam(value = "每页数量", required = true, example = "10") @RequestParam int limit,
                                   @ApiParam(value = "查询的名字", example = "部门1") @RequestParam(required = false) String name,
-                                  @ApiParam(value = "排序方式", example = "+id/-id") @RequestParam(required = false) String sort) {
+                                  @ApiParam(value = "排序方式", example = "+id/-id") @RequestParam(required = false) String sort,
+                                  @ApiParam(value = "分类选择", example = "分类选择") @RequestParam(required = false) Integer categoryId) {
+        log.debug("categoryId = {}", categoryId);
         PageResponse response = new PageResponse();
         Pageable pageable;
         if (Strings.isNotEmpty(sort)) {
@@ -53,11 +55,19 @@ public class FoodController {
             pageable = PageRequest.of(page - 1, limit, Sort.Direction.ASC, "id");
         }
         try {
-            List<FoodVo> categoryVos = foodService.findFood(pageable, name);
+            List<FoodVo> categoryVos = foodService.findFood(pageable, name, categoryId);
             long count;
-            if (StringsUtils.isEmpty(name)) {
+            if(StringsUtils.isEmpty(name) && categoryId == null) {
+                // 名字和分类都不存在
                 count = foodService.findAllFoodCount();
-            } else {
+            }else if(StringsUtils.isNotEmpty(name) && categoryId != null) {
+                // 名字和分类都存在
+                count = foodService.findFoodCountByNameAndCategoryId("%" + name + "%", categoryId);
+            }else if(StringsUtils.isEmpty(name)){
+                // 仅分类存在
+                count = foodService.findFoodCountByCategoryId(categoryId);
+            }else {
+                // 仅名字存在
                 count = foodService.findFoodCountByName("%" + name + "%");
             }
             response.setMessage("查询成功");

@@ -1,5 +1,6 @@
 package com.sophia.store.dao;
 
+import com.sophia.store.entity.po.Category;
 import com.sophia.store.entity.po.Food;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
@@ -16,4 +17,8 @@ public interface FoodDao extends JpaRepository<Food, Integer>, JpaSpecificationE
     List<Food> findByName(String name);
 
     List<Food> findByNameLike(String name);
+
+    List<Food> findByNameLikeAndCategory(String name, Category category);
+
+    List<Food> findByCategory(Category category);
 }

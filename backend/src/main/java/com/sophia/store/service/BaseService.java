@@ -54,11 +54,6 @@ public abstract class BaseService {
         }
         Optional<Category> optionalCategory = categoryDao.findById(vo.getCategoryId());
         Category category = optionalCategory.orElseGet(optionalCategory::get);
-//        Category targetCategory = new Category();
-//        if(type.equalsIgnoreCase(Constant.CREATE)){
-//            targetCategory.setId(null);
-//        }
-//        ObjectUtils.copyFiledValue(category, targetCategory);
         food.setCategory(category);
         if (null != vo.getExpireDate()) {
             food.setExpireDate(vo.getExpireDate());

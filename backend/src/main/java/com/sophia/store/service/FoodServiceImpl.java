@@ -2,6 +2,7 @@ package com.sophia.store.service;
 
 import com.philosophy.base.util.StringsUtils;
 import com.sophia.store.dao.FoodDao;
+import com.sophia.store.entity.po.Category;
 import com.sophia.store.entity.po.Food;
 import com.sophia.store.entity.vo.FoodVo;
 import com.sophia.store.utils.Constant;
@@ -25,14 +26,18 @@ public class FoodServiceImpl extends BaseService implements FoodService {
     private FoodDao foodDao;
 
     @Override
-    public List<FoodVo> findFood(Pageable pageable, String name) {
+    public List<FoodVo> findFood(Pageable pageable, String name, Integer categoryId) {
         List<FoodVo> foodVos = new ArrayList<>();
+        log.debug("categoryId = {}", categoryId);
         Page<Food> foods = foodDao.findAll((Specification<Food>) (root, query, criteriaBuilder) -> {
             // 1. 创建集合 存储查询条件
             List<Predicate> queryList = new ArrayList<>();
             // 2. 添加查询条件
             if (StringsUtils.isNotEmpty(name)) {
                 queryList.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
+            }
+            if (categoryId != null) {
+                queryList.add(criteriaBuilder.equal(root.get("category"), categoryId));
             }
             queryList.add(criteriaBuilder.gt(root.get("restCount"), 0));
             query.where(queryList.toArray(new Predicate[0]));
@@ -56,6 +61,7 @@ public class FoodServiceImpl extends BaseService implements FoodService {
     @Override
     public FoodVo addFood(FoodVo vo) {
         Food food = convertFood(vo, Constant.CREATE);
+        log.debug("food is [{}]", food);
         Food dpt = foodDao.saveAndFlush(food);
         return convertFood(dpt);
     }
@@ -79,6 +85,22 @@ public class FoodServiceImpl extends BaseService implements FoodService {
         Food food = optionalFood.orElseGet(optionalFood::get);
         foodDao.delete(food);
         return vo;
+    }
+
+    @Override
+    public long findFoodCountByNameAndCategoryId(String name, Integer categoryId) {
+        Optional<Category> optionalCategory = categoryDao.findById(categoryId);
+        Category category = optionalCategory.orElseGet(optionalCategory::get);
+        List<Food> foods = foodDao.findByNameLikeAndCategory(name, category);
+        return foods.size();
+    }
+
+    @Override
+    public long findFoodCountByCategoryId(Integer categoryId) {
+        Optional<Category> optionalCategory = categoryDao.findById(categoryId);
+        Category category = optionalCategory.orElseGet(optionalCategory::get);
+        List<Food> foods = foodDao.findByCategory(category);
+        return foods.size();
     }
 
 

@@ -43,11 +43,7 @@ public class Category {
     @Column(name = "need_expire", nullable = false)
     @ApiModelProperty(value = "是否需要填写过期日期")
     private Boolean needExpire;
-    @OneToMany(
-            mappedBy = "category",
-            cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST},
-            fetch = FetchType.EAGER
-    )
+    @OneToMany(mappedBy = "category",cascade = {CascadeType.MERGE, CascadeType.REFRESH},fetch = FetchType.EAGER)
     @ApiModelProperty(value = "分类下所有的材料")
     private Set<Food> foods = new HashSet<>();
 

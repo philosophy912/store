@@ -1,9 +1,13 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" placeholder="请输入耗材名字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.name" clearable placeholder="请输入耗材名字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" @clear="clearName"/>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查找</el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
+      <el-select v-model="temp.categoryId" placeholder="请选择" clearable filterable @change="changeSelectCategory" @clear="clearCategory">
+        <!-- label是文字，value是值 -->
+        <el-option v-for="item in categories" :key="item.id" :label="item.name" :value="item.id" />
+      </el-select>
+      <el-button class="filter-item" style="margin-left: 10px;" type="success" icon="el-icon-edit" @click="handleCreate">添加</el-button>
     </div>
 
     <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;" @sort-change="sortChange">
@@ -225,6 +229,7 @@ export default {
         this.total = response.totalRows
         this.listLoading = false
       })
+      this.getCategories()
     },
     handleFilter() {
       this.listQuery.page = 1
@@ -446,8 +451,22 @@ export default {
         }
       })
     },
+    changeSelectCategory(value) {
+      log.debug('category value is ' + JSON.stringify(value))
+      this.listQuery.categoryId = value
+      log.debug('listQuery value is ' + JSON.stringify(this.listQuery))
+      this.getList()
+    },
     closeDialog() {
       this.clearFiles()
+    },
+    clearCategory() {
+      this.listQuery.categoryId = undefined
+      this.getList()
+    },
+    clearName() {
+      this.listQuery.name = undefined
+      this.getList()
     }
   }
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface FoodService {
 
-    List<FoodVo> findFood(Pageable pageable, String name);
+    List<FoodVo> findFood(Pageable pageable, String name, Integer categoryId);
 
     long findAllFoodCount();
 
@@ -19,4 +19,7 @@ public interface FoodService {
 
     FoodVo deleteFood(FoodVo vo);
 
+    long findFoodCountByNameAndCategoryId(String name, Integer categoryId);
+
+    long findFoodCountByCategoryId(Integer categoryId);
 }
