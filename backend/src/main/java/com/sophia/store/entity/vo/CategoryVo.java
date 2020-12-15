@@ -1,6 +1,5 @@
 package com.sophia.store.entity.vo;
 
-import com.sophia.store.entity.po.Food;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

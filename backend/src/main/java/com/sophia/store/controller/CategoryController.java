@@ -12,7 +12,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -60,7 +59,7 @@ public class CategoryController {
                                   @ApiParam(value = "排序方式", example = "+id/-id") @RequestParam(required = false) String sort) {
         PageResponse response = new PageResponse();
         Pageable pageable;
-        if (Strings.isNotEmpty(sort)) {
+        if (StringsUtils.isNotEmpty(sort)) {
             if (sort.equalsIgnoreCase(Constant.DESC)) {
                 pageable = PageRequest.of(page - 1, limit, Sort.Direction.DESC, "id");
             } else {

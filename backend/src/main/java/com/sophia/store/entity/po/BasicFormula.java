@@ -6,8 +6,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,7 +40,7 @@ public class BasicFormula implements Serializable {
     @Column(name = "price", nullable = false)
     @ApiModelProperty(value = "总价")
     private Float price;
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER, cascade={CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "basic_id", referencedColumnName = "id")
     @ApiModelProperty(value = "基础产品")
     private Basic basic;
