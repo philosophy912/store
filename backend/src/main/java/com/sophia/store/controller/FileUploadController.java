@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,10 +42,10 @@ public class FileUploadController {
     public Response singleFileUpload(@RequestParam("file") MultipartFile file) {
         Response response = new Response();
         String originFileName = file.getOriginalFilename();
-        log.debug("origin name is {}", originFileName);
+        log.info("origin name is {}", originFileName);
         if (originFileName != null) {
             String extendName = FilesUtils.getExtension(Paths.get(originFileName));
-            log.debug("extend name is {}", extendName);
+            log.info("extend name is {}", extendName);
             boolean flag = false;
             for (String ext : ALLOWED_EXTENSIONS) {
                 if (ext.equalsIgnoreCase(extendName)) {
@@ -58,7 +57,7 @@ public class FileUploadController {
                 response.setCode(Constant.NOK);
                 response.setMessage("文件扩展名必须是" + Arrays.toString(ALLOWED_EXTENSIONS));
             } else {
-                String fileName = System.currentTimeMillis() + "";
+                String fileName = originFileName.split("\\.")[0];
                 String fileFullName = fileName + "." + extendName;
                 Path serverFile = Paths.get(upload_images, fileFullName);
                 Path uploadImages = Paths.get(upload_images);
@@ -67,23 +66,25 @@ public class FileUploadController {
                 }
                 try {
                     file.transferTo(serverFile);
+                    // 100K大小
                     long maxFileSize = 100 * 1024;
-                    log.debug("serverFile size = {}", serverFile.toFile().length());
+                    log.info("serverFile size = {}", serverFile.toFile().length());
+                    String newFileName = fileName + "_scale" + "." + extendName;
+                    Path targetFile = Paths.get(upload_images, newFileName);
+                    ImageUtils imageUtils = new ImageUtils();
                     if (serverFile.toFile().length() < maxFileSize) {
-                        response.setData("/images/" + serverFile.getFileName().toString());
-                        log.debug("serverFile path is {}", serverFile.toAbsolutePath().toString());
+                        // 不做任何处理，只是修改一个名字
+                        imageUtils.scale(serverFile, targetFile, 1, false);
                     } else {
-                        ImageUtils imageUtils = new ImageUtils();
-                        String newFileName = fileName + "_scale" + "." + extendName;
-                        Path targetFile = Paths.get(upload_images, newFileName);
+                        // 缩减文件直到小于100K，基本上10M左右的文件2次能缩小到100K
                         imageUtils.scale(serverFile, targetFile, 2, false);
                         while (targetFile.toFile().length() > maxFileSize) {
                             log.info("scale target file again");
                             imageUtils.scale(targetFile, targetFile, 2, false);
                         }
-                        log.debug("targetFile path is {}", targetFile.toAbsolutePath().toString());
-                        response.setData("/images/" + targetFile.getFileName().toString());
                     }
+                    log.info("serverFile path is {}", targetFile.toAbsolutePath().toString());
+                    response.setData("/images/" + targetFile.getFileName().toString());
                     response.setMessage("upload file success");
                 } catch (IOException | IllegalStateException e) {
                     response.setCode(Constant.SERVER_ERROR);

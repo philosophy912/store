@@ -1,6 +1,6 @@
 HELP.md
+src/main/resources/static/**
 log
-src/main/resources/static
 upload_file
 target/
 !.mvn/wrapper/maven-wrapper.jar
