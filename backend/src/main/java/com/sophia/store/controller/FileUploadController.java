@@ -7,6 +7,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +25,8 @@ import java.util.Arrays;
 @Api(value = "文件上传接口", tags = {"文件上传"})
 public class FileUploadController {
 
-    private static final Path CURRENT_PATH = Paths.get(FilesUtils.getCurrentPath() + File.separator + "upload_file");
+    @Value(("${upload_file}"))
+    private String upload_images;
 
     /**
      * 允许的文件类型
@@ -56,9 +58,10 @@ public class FileUploadController {
                 response.setMessage("文件扩展名必须是" + Arrays.toString(ALLOWED_EXTENSIONS));
             } else {
                 String fileName = System.currentTimeMillis() + "." + extendName;
-                Path serverFile = Paths.get(CURRENT_PATH.toAbsolutePath().toString(), fileName);
-                if (!Files.exists(CURRENT_PATH)) {
-                    Files.createDirectories(CURRENT_PATH);
+                Path serverFile = Paths.get(upload_images, fileName);
+                Path uploadImages = Paths.get(upload_images);
+                if (!Files.exists(uploadImages)) {
+                    Files.createDirectories(uploadImages);
                 }
                 try {
                     file.transferTo(serverFile);

@@ -106,7 +106,24 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.6.0</version>
                 <executions>
-                    <execution>
+<!--                    <execution>-->
+<!--                        <id>exec-npm-run-build</id>-->
+<!--                        <phase>prepare-package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>exec</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            &lt;!&ndash;程序名称&ndash;&gt;-->
+<!--                            <executable>npm</executable>-->
+<!--                            <arguments>-->
+<!--                                <argument>install</argument>-->
+<!--                            </arguments>-->
+<!--                            &lt;!&ndash;${basedir}项目根目录&ndash;&gt;-->
+<!--                            &lt;!&ndash;前端代码地址&ndash;&gt;-->
+<!--                            <workingDirectory>${basedir}/../frontend</workingDirectory>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+					<execution>
                         <id>exec-npm-run-build</id>
                         <phase>prepare-package</phase>
                         <goals>
