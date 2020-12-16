@@ -1,6 +1,7 @@
 package com.sophia.store.controller;
 
 import com.philosophy.base.util.FilesUtils;
+import com.philosophy.image.util.ImageUtils;
 import com.sophia.store.entity.vo.Response;
 import com.sophia.store.utils.Constant;
 import io.swagger.annotations.Api;
@@ -57,15 +58,32 @@ public class FileUploadController {
                 response.setCode(Constant.NOK);
                 response.setMessage("文件扩展名必须是" + Arrays.toString(ALLOWED_EXTENSIONS));
             } else {
-                String fileName = System.currentTimeMillis() + "." + extendName;
-                Path serverFile = Paths.get(upload_images, fileName);
+                String fileName = System.currentTimeMillis() + "";
+                String fileFullName = fileName + "." + extendName;
+                Path serverFile = Paths.get(upload_images, fileFullName);
                 Path uploadImages = Paths.get(upload_images);
                 if (!Files.exists(uploadImages)) {
                     Files.createDirectories(uploadImages);
                 }
                 try {
                     file.transferTo(serverFile);
-                    response.setData("/images/" + serverFile.getFileName().toString());
+                    long maxFileSize = 100 * 1024;
+                    log.debug("serverFile size = {}", serverFile.toFile().length());
+                    if (serverFile.toFile().length() < maxFileSize) {
+                        response.setData("/images/" + serverFile.getFileName().toString());
+                        log.debug("serverFile path is {}", serverFile.toAbsolutePath().toString());
+                    } else {
+                        ImageUtils imageUtils = new ImageUtils();
+                        String newFileName = fileName + "_scale" + "." + extendName;
+                        Path targetFile = Paths.get(upload_images, newFileName);
+                        imageUtils.scale(serverFile, targetFile, 2, false);
+                        while (targetFile.toFile().length() > maxFileSize) {
+                            log.info("scale target file again");
+                            imageUtils.scale(targetFile, targetFile, 2, false);
+                        }
+                        log.debug("targetFile path is {}", targetFile.toAbsolutePath().toString());
+                        response.setData("/images/" + targetFile.getFileName().toString());
+                    }
                     response.setMessage("upload file success");
                 } catch (IOException | IllegalStateException e) {
                     response.setCode(Constant.SERVER_ERROR);

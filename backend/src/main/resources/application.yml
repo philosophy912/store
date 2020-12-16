@@ -44,7 +44,7 @@ spring:
     database: mysql
 
 # upload_file: E:/Work/store/backend/upload_file/
-upload_file: D:/Workspace/github/store/backend/
+upload_file: D:/Workspace/github/store/backend/upload_file/
 
 swagger:
   enable: false
