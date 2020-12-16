@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.sophia</groupId>
     <artifactId>store</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <name>store</name>
     <description>Demo project for Spring Boot</description>
 
@@ -100,12 +100,12 @@
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <!--exec-maven-plugin插件可以执行cmd命令-->
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.6.0</version>
-                <executions>
+<!--            <plugin>-->
+<!--                <groupId>org.codehaus.mojo</groupId>-->
+<!--                &lt;!&ndash;exec-maven-plugin插件可以执行cmd命令&ndash;&gt;-->
+<!--                <artifactId>exec-maven-plugin</artifactId>-->
+<!--                <version>1.6.0</version>-->
+<!--                <executions>-->
 <!--                    <execution>-->
 <!--                        <id>exec-npm-run-build</id>-->
 <!--                        <phase>prepare-package</phase>-->
@@ -123,27 +123,27 @@
 <!--                            <workingDirectory>${basedir}/../frontend</workingDirectory>-->
 <!--                        </configuration>-->
 <!--                    </execution>-->
-					<execution>
-                        <id>exec-npm-run-build</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <!--程序名称-->
-                            <executable>npm</executable>
-                            <arguments>
-                                <!-- 程序所执行的命令-->
-                                <argument>run</argument>
-                                <argument>build</argument>
-                            </arguments>
-                            <!--${basedir}项目根目录-->
-                            <!--前端代码地址-->
-                            <workingDirectory>${basedir}/../frontend</workingDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+<!--					<execution>-->
+<!--                        <id>exec-npm-run-build</id>-->
+<!--                        <phase>prepare-package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>exec</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            &lt;!&ndash;程序名称&ndash;&gt;-->
+<!--                            <executable>npm</executable>-->
+<!--                            <arguments>-->
+<!--                                &lt;!&ndash; 程序所执行的命令&ndash;&gt;-->
+<!--                                <argument>run</argument>-->
+<!--                                <argument>build</argument>-->
+<!--                            </arguments>-->
+<!--                            &lt;!&ndash;${basedir}项目根目录&ndash;&gt;-->
+<!--                            &lt;!&ndash;前端代码地址&ndash;&gt;-->
+<!--                            <workingDirectory>${basedir}/../frontend</workingDirectory>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <!--maven-resources-plugin：maven复制文件插件-->
                 <artifactId>maven-resources-plugin</artifactId>

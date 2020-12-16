@@ -81,7 +81,7 @@
             ref="upload"
             class="avatar-uploader"
             drag
-            action="http://127.0.0.1:8080/upload"
+            action="/upload"
             list-type="picture"
             accept="image/png, image/jpeg, image/gif, image/bmp"
             :show-file-list="false"
