@@ -37,7 +37,7 @@ public class FileUploadController {
 
 
     @SneakyThrows
-    @PostMapping("/upload")
+    @PostMapping("/store/upload")
     @ApiOperation(value = "上传文件")
     public Response singleFileUpload(@RequestParam("file") MultipartFile file) {
         Response response = new Response();

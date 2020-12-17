@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/store/category")
 @Slf4j
 @Api(value = "分类管理接口", tags = {"分类管理"})
 public class CategoryController {

@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping("/food")
+@RequestMapping("/store/food")
 @Slf4j
 @Api(value = "耗材接口", tags = {"耗材管理"})
 public class FoodController {

@@ -26,7 +26,7 @@ import java.util.Map;
  * @date 2020/11/20 14:54
  **/
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/store/user")
 @Slf4j
 @Api(value = "登陆接口", tags = {"登陆管理"})
 public class UserController {
