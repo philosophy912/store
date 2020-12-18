@@ -27,7 +27,6 @@ import java.io.Serializable;
 @JsonIgnoreProperties(value = {"handler"})
 @ApiModel
 public class Material implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty(value = "编号")

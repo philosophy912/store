@@ -37,9 +37,6 @@ public class BasicFormula implements Serializable {
     @Column(name = "count", nullable = false)
     @ApiModelProperty(value = "数量")
     private Float count;
-    @Column(name = "price", nullable = false)
-    @ApiModelProperty(value = "总价")
-    private Float price;
     @OneToOne(fetch = FetchType.EAGER, cascade={CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "basic_id", referencedColumnName = "id")
     @ApiModelProperty(value = "基础产品")
