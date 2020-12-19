@@ -44,10 +44,7 @@ public class Middle implements Serializable {
     private String unit;
     @Column(name = "capacity")
     @ApiModelProperty(value = "总量")
-    private Float capacity;
-    @Column(name = "price", nullable = false)
-    @ApiModelProperty(value = "总价")
-    private Float price;
+    private Integer capacity;
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "middle_id")
     @ApiModelProperty(value = "原材料集合")

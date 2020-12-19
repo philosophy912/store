@@ -36,8 +36,8 @@ public class MaterialFormula implements Serializable {
     private Integer id;
     @Column(name = "count", nullable = false)
     @ApiModelProperty(value = "数量")
-    private Float count;
-    @OneToOne(fetch = FetchType.EAGER, cascade={CascadeType.MERGE, CascadeType.REFRESH})
+    private Integer count;
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "material_id", referencedColumnName = "id")
     @ApiModelProperty(value = "原材料")
     private Material material;

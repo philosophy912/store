@@ -23,7 +23,7 @@ public class MiddleVo {
     @ApiModelProperty(value = "单位")
     private String unit;
     @ApiModelProperty(value = "总量")
-    private Float capacity;
+    private Integer capacity;
     @ApiModelProperty(value = "总价")
     private Float price;
     @ApiModelProperty(value = "原材料集合")

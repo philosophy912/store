@@ -1,6 +1,5 @@
 package com.sophia.store.service;
 
-import com.sophia.store.entity.vo.CategoryVo;
 import com.sophia.store.entity.vo.MaterialVo;
 import org.springframework.data.domain.Pageable;
 

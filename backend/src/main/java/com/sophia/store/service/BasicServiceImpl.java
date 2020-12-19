@@ -6,6 +6,7 @@ import com.sophia.store.entity.po.Material;
 import com.sophia.store.entity.po.MaterialFormula;
 import com.sophia.store.entity.vo.BasicVo;
 import com.sophia.store.entity.vo.MaterialFormulaVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -13,22 +14,36 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 @Service
+@Slf4j
 public class BasicServiceImpl extends BaseService implements BasicService {
 
     private BasicVo convert(Basic basic) {
         BasicVo vo = new BasicVo();
+        log.debug("basic id = {}", basic.getId());
         vo.setId(basic.getId());
         vo.setCapacity(basic.getCapacity());
         vo.setName(basic.getName());
-        vo.setPrice(basic.getPrice());
         vo.setUnit(basic.getUnit());
-        vo.setMaterialFormulaVos(convertMaterialFormula(basic.getMaterialFormulaSet()));
+        Set<MaterialFormulaVo> materialFormulaVos = convertMaterialFormulaVo(basic.getMaterialFormulaSet());
+        vo.setMaterialFormulaVos(materialFormulaVos);
+        float price = 0;
+        for (MaterialFormulaVo formulaVo : materialFormulaVos) {
+            Optional<Material> optionalMaterial = materialDao.findById(formulaVo.getMaterialId());
+            Material material = optionalMaterial.orElseGet(optionalMaterial::get);
+            float formulaPrice = formulaVo.getCount() * material.getPricePerUnit();
+            log.debug("material id = {}, price = {}, pricePerUnit = {}", material.getId(), material.getPrice(), material.getPricePerUnit());
+            log.debug("formula count = {}", formulaVo.getCount());
+            log.debug("formula price = {}", formulaPrice);
+            price += formulaPrice;
+
+        }
+        vo.setPrice(price);
+        vo.setPricePerUnit(price / vo.getCapacity());
         return vo;
     }
 
@@ -76,20 +91,9 @@ public class BasicServiceImpl extends BaseService implements BasicService {
             basic.setName(vo.getName());
             basic.setCapacity(vo.getCapacity());
             basic.setUnit(vo.getUnit());
-            Set<MaterialFormulaVo> materialFormulaVos = vo.getMaterialFormulaVos();
-            float price = 0;
-            Set<MaterialFormula> materialFormulaSet = new HashSet<>();
-            for (MaterialFormulaVo materialFormulaVo : materialFormulaVos) {
-                MaterialFormula materialFormula = new MaterialFormula();
-                materialFormula.setCount(materialFormulaVo.getCount());
-                Optional<Material> optionalMaterial = materialDao.findById(materialFormulaVo.getMaterialId());
-                Material material = optionalMaterial.orElseGet(optionalMaterial::get);
-                materialFormula.setMaterial(material);
-                materialFormulaSet.add(materialFormula);
-                price += materialFormula.getCount() * materialFormula.getMaterial().getPrice();
-            }
-            basic.setMaterialFormulaSet(materialFormulaSet);
-            basic.setPrice(price);
+            Set<MaterialFormula> materialFormulas = convertMaterialFormula(vo.getMaterialFormulaVos());
+            materialFormulas.forEach(formula -> materialFormulaDao.save(formula));
+            basic.setMaterialFormulaSet(materialFormulas);
             Basic dpt = basicDao.saveAndFlush(basic);
             return convert(dpt);
         }
@@ -103,22 +107,15 @@ public class BasicServiceImpl extends BaseService implements BasicService {
         basic.setName(vo.getName());
         basic.setCapacity(vo.getCapacity());
         basic.setUnit(vo.getUnit());
-        Set<MaterialFormulaVo> materialFormulaVos = vo.getMaterialFormulaVos();
-        float price = 0;
-        Set<MaterialFormula> materialFormulaSet = new HashSet<>();
-        for (MaterialFormulaVo materialFormulaVo : materialFormulaVos) {
-            Optional<Material> optionalMaterial = materialDao.findById(materialFormulaVo.getMaterialId());
-            Material material = optionalMaterial.orElseGet(optionalMaterial::get);
-            Optional<MaterialFormula> optionalMaterialFormula = materialFormulaDao.findById(materialFormulaVo.getId());
-            MaterialFormula materialFormula = optionalMaterialFormula.orElseGet(optionalMaterialFormula::get);
-            materialFormula.setCount(materialFormulaVo.getCount());
-            materialFormula.setMaterial(material);
-            price += materialFormula.getCount() * materialFormula.getMaterial().getPrice();
+        Set<MaterialFormula> materialFormulas = convertMaterialFormula(vo.getMaterialFormulaVos());
+        if (materialFormulas.size() < 1) {
+            String error = "必须包含至少一个原材料配方";
+            throw new RuntimeException(error);
         }
-        basic.setMaterialFormulaSet(materialFormulaSet);
-        basic.setPrice(price);
+        materialFormulas.forEach(formula -> materialFormulaDao.save(formula));
+        basic.setMaterialFormulaSet(materialFormulas);
         Basic dpt = basicDao.saveAndFlush(basic);
-        return null;
+        return convert(dpt);
     }
 
     @Override
@@ -126,7 +123,7 @@ public class BasicServiceImpl extends BaseService implements BasicService {
         Optional<Basic> optionalBasic = basicDao.findById(vo.getId());
         Basic basic = optionalBasic.orElseGet(optionalBasic::get);
         Set<MaterialFormula> materialFormulaSet = basic.getMaterialFormulaSet();
-        for(MaterialFormula formula: materialFormulaSet){
+        for (MaterialFormula formula : materialFormulaSet) {
             materialFormulaDao.delete(formula);
         }
         basicDao.delete(basic);

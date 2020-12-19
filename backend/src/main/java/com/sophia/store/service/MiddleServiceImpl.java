@@ -1,6 +1,7 @@
 package com.sophia.store.service;
 
 import com.philosophy.base.util.StringsUtils;
+import com.sophia.store.entity.po.Basic;
 import com.sophia.store.entity.po.BasicFormula;
 import com.sophia.store.entity.po.Material;
 import com.sophia.store.entity.po.MaterialFormula;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -25,11 +25,35 @@ public class MiddleServiceImpl extends BaseService implements MiddleService {
 
     public MiddleVo convert(Middle middle) {
         MiddleVo vo = new MiddleVo();
+        vo.setId(middle.getId());
         vo.setCapacity(middle.getCapacity());
         vo.setName(middle.getName());
-        vo.setPrice(middle.getPrice());
-        vo.setMaterialFormulaVos(convertMaterialFormula(middle.getMaterialFormulaSet()));
-        vo.setBasicFormulaVos(convertBasicFormula(middle.getBasicFormulaSet()));
+        vo.setUnit(middle.getUnit());
+        Set<MaterialFormulaVo> materialFormulaVos = convertMaterialFormulaVo(middle.getMaterialFormulaSet());
+        Set<BasicFormulaVo> basicFormulaVos = convertBasicFormulaVo(middle.getBasicFormulaSet());
+        vo.setMaterialFormulaVos(materialFormulaVos);
+        vo.setBasicFormulaVos(basicFormulaVos);
+        float price = 0;
+        for(MaterialFormulaVo formulaVo: materialFormulaVos){
+            Optional<Material> optionalMaterial = materialDao.findById(formulaVo.getMaterialId());
+            Material material = optionalMaterial.orElseGet(optionalMaterial::get);
+            price += material.getPricePerUnit() * formulaVo.getCount();
+        }
+        for(BasicFormulaVo formulaVo: basicFormulaVos){
+            float basicPrice = 0;
+            float basicPricePerUnit = 0;
+            Optional<Basic> optionalBasic = basicDao.findById(formulaVo.getBasicId());
+            Basic basic = optionalBasic.orElseGet(optionalBasic::get);
+            Set<MaterialFormula> materialFormulaSet = basic.getMaterialFormulaSet();
+            for(MaterialFormula formula: materialFormulaSet){
+                // 单个Basic的总价
+                basicPrice += formula.getCount() * formula.getMaterial().getPricePerUnit();
+            }
+            // basic的每单位价格
+            basicPricePerUnit = basicPrice / basic.getCapacity();
+            price += formulaVo.getCount() * basicPricePerUnit;
+        }
+        vo.setPrice(price);
         return vo;
     }
 
@@ -71,12 +95,43 @@ public class MiddleServiceImpl extends BaseService implements MiddleService {
 
     @Override
     public MiddleVo add(MiddleVo vo) {
+        List<Middle> middles = middleDao.findByName(vo.getName());
+        if(middles.size() == 0){
+            Middle middle = new Middle();
+            middle.setName(vo.getName());
+            middle.setCapacity(vo.getCapacity());
+            middle.setUnit(vo.getUnit());
+            Set<MaterialFormula> materialFormulas = convertMaterialFormula(vo.getMaterialFormulaVos());
+            Set<BasicFormula> basicFormulas = convertBasicFormula(vo.getBasicFormulaVos());
+            materialFormulas.forEach(formula -> materialFormulaDao.save(formula));
+            basicFormulas.forEach(formula -> basicFormulaDao.save(formula));
+            middle.setMaterialFormulaSet(materialFormulas);
+            middle.setBasicFormulaSet(basicFormulas);
+            Middle dpt = middleDao.saveAndFlush(middle);
+            return convert(dpt);
+        }
         return null;
     }
 
     @Override
     public MiddleVo update(MiddleVo vo) {
-        return null;
+        Optional<Middle> optionalMiddle = middleDao.findById(vo.getId());
+        Middle middle = optionalMiddle.orElseGet(optionalMiddle::get);
+        middle.setName(vo.getName());
+        middle.setCapacity(vo.getCapacity());
+        middle.setUnit(vo.getUnit());
+        Set<MaterialFormula> materialFormulas = convertMaterialFormula(vo.getMaterialFormulaVos());
+        Set<BasicFormula> basicFormulas = convertBasicFormula(vo.getBasicFormulaVos());
+        if (!(materialFormulas.size() > 0 || basicFormulas.size() > 0)) {
+            String error = "必须包含至少一个原材料或者基础材料配方";
+            throw new RuntimeException(error);
+        }
+        materialFormulas.forEach(formula -> materialFormulaDao.save(formula));
+        basicFormulas.forEach(formula -> basicFormulaDao.save(formula));
+        middle.setMaterialFormulaSet(materialFormulas);
+        middle.setBasicFormulaSet(basicFormulas);
+        Middle dpt = middleDao.saveAndFlush(middle);
+        return convert(dpt);
     }
 
     @Override
@@ -87,6 +142,7 @@ public class MiddleServiceImpl extends BaseService implements MiddleService {
         basicFormulaSet.forEach(formula -> basicFormulaDao.delete(formula));
         Set<MaterialFormula> materialFormulaSet = middle.getMaterialFormulaSet();
         materialFormulaSet.forEach(formula -> materialFormulaDao.delete(formula));
-        return null;
+        middleDao.delete(middle);
+        return vo;
     }
 }

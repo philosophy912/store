@@ -13,7 +13,4 @@ public interface BasicFormulaDao extends JpaRepository<BasicFormula, Integer>, J
     @NotNull
     Page<BasicFormula> findAll(@NotNull Pageable pageable);
 
-    List<BasicFormula> findByName(String name);
-
-    List<BasicFormula> findByNameLike(String name);
 }

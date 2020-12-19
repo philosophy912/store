@@ -90,7 +90,7 @@ public class MaterialServiceImpl extends BaseService implements MaterialService 
         material.setPrice(vo.getPrice());
         material.setUnit(vo.getUnit());
         material.setName(vo.getName());
-        material.setPricePerUnit(material.getPrice()/material.getCapacity());
+        material.setPricePerUnit(material.getCapacity()/material.getPrice());
         Material dpt = materialDao.saveAndFlush(material);
         return convert(dpt);
     }

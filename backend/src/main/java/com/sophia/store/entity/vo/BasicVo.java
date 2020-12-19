@@ -23,9 +23,11 @@ public class BasicVo {
     @ApiModelProperty(value = "单位")
     private String unit;
     @ApiModelProperty(value = "总量")
-    private Float capacity;
+    private Integer capacity;
     @ApiModelProperty(value = "总价")
     private Float price;
     @ApiModelProperty(value = "包含的原材料")
     private Set<MaterialFormulaVo> materialFormulaVos;
+    @ApiModelProperty(value = "单位价格")
+    private Float pricePerUnit;
 }

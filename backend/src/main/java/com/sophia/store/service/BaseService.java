@@ -17,16 +17,14 @@ import com.sophia.store.entity.vo.CategoryVo;
 import com.sophia.store.entity.vo.FoodVo;
 import com.sophia.store.entity.vo.MaterialFormulaVo;
 import com.sophia.store.utils.Constant;
-import com.sophia.store.utils.ObjectUtils;
-import sun.util.resources.cldr.teo.CalendarData_teo_KE;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Resource;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+@Slf4j
 public abstract class BaseService {
 
     @Resource
@@ -111,7 +109,7 @@ public abstract class BaseService {
         return vo;
     }
 
-    protected Set<MaterialFormulaVo> convertMaterialFormula(Set<MaterialFormula> materialFormulas) {
+    protected Set<MaterialFormulaVo> convertMaterialFormulaVo(Set<MaterialFormula> materialFormulas) {
         Set<MaterialFormulaVo> materialFormulaVos = new HashSet<>();
         materialFormulas.forEach(formula -> {
             MaterialFormulaVo materialFormulaVo = new MaterialFormulaVo();
@@ -125,18 +123,54 @@ public abstract class BaseService {
         return materialFormulaVos;
     }
 
-    protected Set<BasicFormulaVo> convertBasicFormula (Set<BasicFormula> basicFormulas){
+    protected Set<BasicFormulaVo> convertBasicFormulaVo(Set<BasicFormula> basicFormulas) {
         Set<BasicFormulaVo> basicFormulaVos = new HashSet<>();
         basicFormulas.forEach(formula -> {
             BasicFormulaVo basicFormulaVo = new BasicFormulaVo();
             basicFormulaVo.setId(formula.getId());
             basicFormulaVo.setCount(formula.getCount());
-            Basic basic = formula.getBasic();;
+            Basic basic = formula.getBasic();
+            ;
             basicFormulaVo.setBasicId(basic.getId());
             basicFormulaVo.setBasicName(basic.getName());
             basicFormulaVos.add(basicFormulaVo);
         });
         return basicFormulaVos;
+    }
+
+    protected Set<MaterialFormula> convertMaterialFormula(Set<MaterialFormulaVo> materialFormulaVos) {
+        Set<MaterialFormula> materialFormulas = new HashSet<>();
+        //有可能不需要中级材料，所以需要判断是否为空
+        if (null != materialFormulaVos) {
+            for (MaterialFormulaVo formula : materialFormulaVos) {
+                int materialId = formula.getMaterialId();
+                log.debug("material ID = {}", materialId);
+                MaterialFormula materialFormula = new MaterialFormula();
+                materialFormula.setCount(formula.getCount());
+                Optional<Material> optionalMaterial = materialDao.findById(materialId);
+                Material material = optionalMaterial.orElseGet(optionalMaterial::get);
+                materialFormula.setMaterial(material);
+                materialFormulas.add(materialFormula);
+            }
+        }
+        return materialFormulas;
+    }
+
+    protected Set<BasicFormula> convertBasicFormula(Set<BasicFormulaVo> basicFormulaVos) {
+        Set<BasicFormula> basicFormulas = new HashSet<>();
+        if (null != basicFormulaVos) {
+            for (BasicFormulaVo formula : basicFormulaVos) {
+                int basicId = formula.getBasicId();
+                log.debug("basic ID = {}", basicId);
+                BasicFormula basicFormula = new BasicFormula();
+                basicFormula.setCount(formula.getCount());
+                Optional<Basic> optionalBasic = basicDao.findById(basicId);
+                Basic basic = optionalBasic.orElseGet(optionalBasic::get);
+                basicFormula.setBasic(basic);
+                basicFormulas.add(basicFormula);
+            }
+        }
+        return basicFormulas;
     }
 
 }

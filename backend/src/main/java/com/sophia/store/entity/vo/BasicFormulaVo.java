@@ -18,7 +18,7 @@ public class BasicFormulaVo {
     @ApiModelProperty(value = "编号")
     private Integer id;
     @ApiModelProperty(value = "数量")
-    private Float count;
+    private Integer count;
     @ApiModelProperty(value = "编号")
     private Integer basicId;
     @ApiModelProperty(value = "名字")

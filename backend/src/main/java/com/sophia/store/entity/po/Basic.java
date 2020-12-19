@@ -42,12 +42,9 @@ public class Basic implements Serializable {
     @ApiModelProperty(value = "单位")
     private String unit;
     @Column(name = "capacity")
-    @ApiModelProperty(value = "总量")
-    private Float capacity;
-    @Column(name = "price", nullable = false)
-    @ApiModelProperty(value = "总价")
-    private Float price;
-    @OneToMany(fetch = FetchType.EAGER, cascade={CascadeType.MERGE, CascadeType.REFRESH})
+    @ApiModelProperty(value = "容量")
+    private Integer capacity;
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "basic_id")
     @ApiModelProperty(value = "包含的原材料")
     private Set<MaterialFormula> materialFormulaSet = new HashSet<>();
