@@ -1,11 +1,9 @@
 package com.sophia.store.service;
 
 import com.philosophy.base.util.NumericUtils;
-import com.sophia.store.entity.po.Middle;
-import com.sophia.store.entity.vo.BasicFormulaVo;
-import com.sophia.store.entity.vo.BasicVo;
-import com.sophia.store.entity.vo.MaterialFormulaVo;
+import com.sophia.store.entity.vo.FormulaVo;
 import com.sophia.store.entity.vo.MiddleVo;
+import com.sophia.store.utils.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -55,66 +52,72 @@ class MiddleServiceTest {
             vo.setUnit(UNITS[NumericUtils.randomInteger(0, UNITS.length - 1)]);
             if (i % 5 == 0) {
                 // 只添加materialFormula
-                Set<MaterialFormulaVo> materialFormulaVos = new HashSet<>();
+                Set<FormulaVo> formulaVos = new HashSet<>();
                 Set<Integer> idSet = new HashSet<>();
                 for (int j = 0; j < NumericUtils.randomInteger(5, 10); j++) {
-                    MaterialFormulaVo formulaVo = new MaterialFormulaVo();
+                    FormulaVo formulaVo = new FormulaVo();
                     formulaVo.setCount(NumericUtils.randomInteger(1, 5));
                     Integer materialId = NumericUtils.randomInteger(1, 100);
                     int size = idSet.size();
                     idSet.add(materialId);
                     if (size != idSet.size()) {
-                        formulaVo.setMaterialId(materialId);
-                        materialFormulaVos.add(formulaVo);
+                        formulaVo.setType(Constant.MATERIAL);
+                        formulaVo.setMaterialFormulaId(materialId);
+                        formulaVos.add(formulaVo);
                     }
                 }
-                vo.setMaterialFormulaVos(materialFormulaVos);
+                vo.setFormulaVos(formulaVos);
             } else if (i % 3 == 0) {
                 // 只添加basicFormula
-                Set<BasicFormulaVo> basicFormulaVos = new HashSet<>();
+                Set<FormulaVo> formulaVos = new HashSet<>();
                 Set<Integer> idSet = new HashSet<>();
                 for (int j = 0; j < NumericUtils.randomInteger(5, 10); j++) {
-                    BasicFormulaVo formulaVo = new BasicFormulaVo();
+                    FormulaVo formulaVo = new FormulaVo();
                     formulaVo.setCount(NumericUtils.randomInteger(1, 5));
                     Integer basicId = NumericUtils.randomInteger(3, 100);
                     int size = idSet.size();
                     idSet.add(basicId);
                     if (size != idSet.size()) {
-                        formulaVo.setBasicId(basicId);
-                        basicFormulaVos.add(formulaVo);
+                        formulaVo.setType(Constant.BASIC);
+                        formulaVo.setBasicFormulaId(basicId);
+                        formulaVos.add(formulaVo);
                     }
                 }
-                vo.setBasicFormulaVos(basicFormulaVos);
+                vo.setFormulaVos(formulaVos);
             } else {
-                Set<MaterialFormulaVo> materialFormulaVos = new HashSet<>();
+                // 只添加materialFormula
+                Set<FormulaVo> formulaVos = new HashSet<>();
                 Set<Integer> materialIdSet = new HashSet<>();
                 for (int j = 0; j < NumericUtils.randomInteger(5, 10); j++) {
-                    MaterialFormulaVo formulaVo = new MaterialFormulaVo();
+                    FormulaVo formulaVo = new FormulaVo();
                     formulaVo.setCount(NumericUtils.randomInteger(1, 5));
                     Integer materialId = NumericUtils.randomInteger(1, 100);
                     int size = materialIdSet.size();
                     materialIdSet.add(materialId);
                     if (size != materialIdSet.size()) {
-                        formulaVo.setMaterialId(materialId);
-                        materialFormulaVos.add(formulaVo);
+                        if (j % 2 == 0) {
+                            formulaVo.setType(Constant.MATERIAL);
+                            formulaVo.setMaterialFormulaId(materialId);
+                        }
+                        formulaVos.add(formulaVo);
                     }
                 }
-                vo.setMaterialFormulaVos(materialFormulaVos);
-                // 只添加basicFormula
-                Set<BasicFormulaVo> basicFormulaVos = new HashSet<>();
                 Set<Integer> basicIdSet = new HashSet<>();
                 for (int j = 0; j < NumericUtils.randomInteger(5, 10); j++) {
-                    BasicFormulaVo formulaVo = new BasicFormulaVo();
+                    FormulaVo formulaVo = new FormulaVo();
                     formulaVo.setCount(NumericUtils.randomInteger(1, 5));
-                    Integer basicId = NumericUtils.randomInteger(3, 100);
+                    Integer basicId = NumericUtils.randomInteger(1, 100);
                     int size = basicIdSet.size();
                     basicIdSet.add(basicId);
                     if (size != basicIdSet.size()) {
-                        formulaVo.setBasicId(basicId);
-                        basicFormulaVos.add(formulaVo);
+                        if (j % 2 == 0) {
+                            formulaVo.setType(Constant.BASIC);
+                            formulaVo.setBasicFormulaId(basicId);
+                        }
+                        formulaVos.add(formulaVo);
                     }
                 }
-                vo.setBasicFormulaVos(basicFormulaVos);
+                vo.setFormulaVos(formulaVos);
             }
             service.add(vo);
         }
@@ -127,22 +130,19 @@ class MiddleServiceTest {
         vo.setName("中级材料1");
         vo.setUnit("克");
         vo.setCapacity(1000);
-        Set<MaterialFormulaVo> materialFormulaVos = new HashSet<>();
-        for (int i = 0; i < 3; i++) {
-            MaterialFormulaVo formulaVo = new MaterialFormulaVo();
+        Set<FormulaVo> formulaVos = new HashSet<>();
+        for (int i = 0; i < 10; i++) {
+            FormulaVo formulaVo = new FormulaVo();
             formulaVo.setCount(5);
-            formulaVo.setMaterialId(i + 1);
-            materialFormulaVos.add(formulaVo);
+            formulaVo.setId(i + 1);
+            if (i % 2 == 0) {
+                formulaVo.setType(Constant.MATERIAL);
+            } else {
+                formulaVo.setType(Constant.BASIC);
+            }
+            formulaVos.add(formulaVo);
         }
-        vo.setMaterialFormulaVos(materialFormulaVos);
-        Set<BasicFormulaVo> basicFormulaVos = new HashSet<>();
-        for (int i = 0; i < 2; i++) {
-            BasicFormulaVo formulaVo = new BasicFormulaVo();
-            formulaVo.setCount(5);
-            formulaVo.setBasicId(i + 1);
-            basicFormulaVos.add(formulaVo);
-        }
-        vo.setBasicFormulaVos(basicFormulaVos);
+        vo.setFormulaVos(formulaVos);
         service.update(vo);
     }
 

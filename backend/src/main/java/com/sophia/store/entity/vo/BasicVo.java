@@ -27,7 +27,7 @@ public class BasicVo {
     @ApiModelProperty(value = "总价")
     private Float price;
     @ApiModelProperty(value = "包含的原材料")
-    private Set<MaterialFormulaVo> materialFormulaVos;
+    private Set<FormulaVo> formulaVos;
     @ApiModelProperty(value = "单位价格")
     private Float pricePerUnit;
 }

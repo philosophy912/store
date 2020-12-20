@@ -17,5 +17,8 @@ public class Constant {
     public static final String DESC = "-id";
     public static final String ASC = "+id";
 
+    public static  final String MATERIAL = "原材料";
+    public static  final String BASIC = "初级材料";
+
 
 }

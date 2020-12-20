@@ -26,8 +26,8 @@ public class MiddleVo {
     private Integer capacity;
     @ApiModelProperty(value = "总价")
     private Float price;
-    @ApiModelProperty(value = "原材料集合")
-    private Set<MaterialFormulaVo> materialFormulaVos;
-    @ApiModelProperty(value = "初级产品集合")
-    private Set<BasicFormulaVo> basicFormulaVos;
+    @ApiModelProperty(value = "材料集合")
+    private Set<FormulaVo> formulaVos;
+    @ApiModelProperty(value = "单位价格")
+    private Float pricePerUnit;
 }
