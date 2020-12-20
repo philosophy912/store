@@ -40,7 +40,7 @@ export const notEmpty = (rule, value, callback) => {
   // 去掉空格
   value = value.replace(/\s+/g, '')
   if (value === '') {
-    callback(new Error('请选择至少一项'))
+    callback(new Error('请填写内容'))
   } else {
     callback()
   }
@@ -96,3 +96,4 @@ export const isValueSelected = (rule, value, callback) => {
   log.debug('isValueSelected value = ' + JSON.stringify(value))
   callback()
 }
+

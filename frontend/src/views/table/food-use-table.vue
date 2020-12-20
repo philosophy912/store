@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" clearable placeholder="请输入耗材名字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" @clear="clearName"/>
+      <el-input v-model="listQuery.name" clearable placeholder="请输入耗材名字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" @clear="clearName" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查找</el-button>
       <el-select v-model="temp.categoryId" placeholder="请选择" clearable filterable @change="changeCategory" @clear="clearCategory">
         <!-- label是文字，value是值 -->

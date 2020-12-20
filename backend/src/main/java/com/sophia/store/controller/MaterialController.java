@@ -147,7 +147,7 @@ public class MaterialController {
             }
         }catch (Exception e) {
             response.setCode(Constant.NOK);
-            response.setMessage("删除失败");
+            response.setMessage("删除失败， 该原材料被其他产品使用");
             response.setErrorInfo(e.getMessage());
         }
         return response;

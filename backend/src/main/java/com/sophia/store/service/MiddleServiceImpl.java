@@ -41,7 +41,6 @@ public class MiddleServiceImpl extends BaseService implements MiddleService {
         }
         for(BasicFormulaVo formulaVo: basicFormulaVos){
             float basicPrice = 0;
-            float basicPricePerUnit = 0;
             Optional<Basic> optionalBasic = basicDao.findById(formulaVo.getBasicId());
             Basic basic = optionalBasic.orElseGet(optionalBasic::get);
             Set<MaterialFormula> materialFormulaSet = basic.getMaterialFormulaSet();
@@ -50,8 +49,7 @@ public class MiddleServiceImpl extends BaseService implements MiddleService {
                 basicPrice += formula.getCount() * formula.getMaterial().getPricePerUnit();
             }
             // basic的每单位价格
-            basicPricePerUnit = basicPrice / basic.getCapacity();
-            price += formulaVo.getCount() * basicPricePerUnit;
+            price += formulaVo.getCount() * (basicPrice / basic.getCapacity());
         }
         vo.setPrice(price);
         return vo;

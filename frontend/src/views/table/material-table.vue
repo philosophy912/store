@@ -17,9 +17,24 @@
           <span class="link-type" @click="handleUpdate(row)">{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="是否需要过期时间" min-width="150px" align="center">
+      <el-table-column label="容量" min-width="150px" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ showExpire(row.needExpire) }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.capacity }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="单位" min-width="150px" align="center">
+        <template slot-scope="{row}">
+          <span class="link-type" @click="handleUpdate(row)">{{ row.unit }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="价格" min-width="150px" align="center">
+        <template slot-scope="{row}">
+          <span class="link-type" @click="handleUpdate(row)">{{ parseNumber(row.price) }} 元</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="单位价格" min-width="150px" align="center">
+        <template slot-scope="{row}">
+          <span class="link-type" @click="handleUpdate(row)">{{ parseNumber(row.pricePerUnit) }} 元/{{ row.unit }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
@@ -37,8 +52,14 @@
         <el-form-item label="名称" prop="name">
           <el-input v-model="temp.name" />
         </el-form-item>
-        <el-form-item label="过期时间" prop="needExpire">
-          <el-switch v-model="temp.needExpire" active-text="需要" inactive-text="不需要" />
+        <el-form-item label="容量" prop="capacity">
+          <el-input v-model="temp.capacity" />
+        </el-form-item>
+        <el-form-item label="单位" prop="unit">
+          <el-input v-model="temp.unit" />
+        </el-form-item>
+        <el-form-item label="价格(元)" prop="price">
+          <el-input v-model="temp.price" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -60,8 +81,9 @@
 </template>
 
 <script>
-import { fetchList, createCategory, updateCategory, deleteCategory } from '@/api/category'
-import { isNameValid } from '@/utils/validates'
+import { fetchList, createMaterial, updateMaterial, deleteMaterial } from '@/api/material'
+import { isNameValid, isNumberValid, notEmpty } from '@/utils/validates'
+import { parseNumber } from '@/utils/utils'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -133,7 +155,9 @@ export default {
       pvData: [],
       rules: {
         name: [{ required: true, trigger: 'blur', validator: isNameValid }],
-        needExpire: [{ required: true, trigger: 'change' }]
+        capacity: [{ required: true, trigger: 'blur', validator: isNumberValid }],
+        unit: [{ required: true, trigger: 'blur', validator: notEmpty }],
+        price: [{ required: true, trigger: 'blur', validator: isNumberValid }]
       },
       downloadLoading: false
     }
@@ -193,7 +217,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createCategory(this.temp).then(() => {
+          createMaterial(this.temp).then(() => {
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',
@@ -221,7 +245,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          updateCategory(tempData).then(() => {
+          updateMaterial(tempData).then(() => {
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',
@@ -247,7 +271,7 @@ export default {
           'id': row.id,
           'name': row.name
         }
-        deleteCategory(data).then(() => {
+        deleteMaterial(data).then(() => {
           this.$notify({
             title: '成功',
             message: '删除分类【' + row.name + '】成功',
@@ -305,6 +329,9 @@ export default {
     clearName() {
       this.listQuery.name = undefined
       this.getList()
+    },
+    parseNumber(number) {
+      return parseNumber(number)
     }
   }
 }
