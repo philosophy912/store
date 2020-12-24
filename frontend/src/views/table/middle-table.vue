@@ -7,6 +7,15 @@
     </div>
 
     <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;" @sort-change="sortChange">
+      <el-table-column fixed type="expand">
+        <template slot-scope="scope">
+          <el-table :data="scope.row.formulaVos" border style="width: 100%">
+            <el-table-column prop="count" label="数量" align="center" />
+            <el-table-column prop="type" label="类型" align="center" />
+            <el-table-column prop="name" label="名称" align="center" />
+          </el-table>
+        </template>
+      </el-table-column>
       <el-table-column label="序号" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>

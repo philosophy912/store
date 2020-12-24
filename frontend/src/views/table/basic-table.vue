@@ -7,6 +7,15 @@
     </div>
 
     <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;" @sort-change="sortChange">
+      <el-table-column fixed type="expand">
+        <template slot-scope="scope">
+          <el-table :data="scope.row.formulaVos" border style="width: 100%">
+            <el-table-column prop="count" label="数量" align="center" />
+            <el-table-column prop="type" label="类型" align="center" />
+            <el-table-column prop="name" label="名称" align="center" />
+          </el-table>
+        </template>
+      </el-table-column>
       <el-table-column label="序号" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
@@ -48,7 +57,7 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 600px; margin-left:50px;">
         <el-form-item label="名称" prop="name">
           <el-input v-model="temp.name" />
         </el-form-item>
@@ -58,12 +67,28 @@
         <el-form-item label="单位" prop="unit">
           <el-input v-model="temp.unit" />
         </el-form-item>
-        <el-form-item label="价格(元)" prop="price">
-          <el-input v-model="temp.price" />
+        <el-form-item v-for="(formula, index) in temp.formulaVos" :key="index" :label="formula.type" label-width="80px">
+          <el-col :span="6">
+            <el-select v-model="formula.id" placeholder="请选择">
+              <el-option v-for="item in materials" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
+          </el-col>
+          <el-col :span="2" class="count" style="text-align:center;">
+            <span>数量</span>
+          </el-col>
+          <el-col :span="6">
+            <el-input v-model="formula.count" autocomplete="off" />
+          </el-col>
+          <el-col :span="10" class="buttons" style="text-align:right;">
+            <el-button type="danger" size="medium" icon="el-icon-remove-outline" @click="del(index)" />
+            <el-button type="success" size="medium" icon="el-icon-circle-plus-outline" @click="addFormula(index)" />
+            <el-button type="primary" size="medium" icon="el-icon-circle-plus-outline" @click="add(index)" />
+          </el-col>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button @click="cancleDialog">取消</el-button>
+        <el-button v-show="showAdd()" type="success" @click="addFormula(0)">新增配方</el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">确认</el-button>
       </div>
     </el-dialog>
@@ -82,11 +107,15 @@
 
 <script>
 import { fetchList, createBasic, updateBasic, deleteBasic } from '@/api/basic'
+import { findAllMaterial } from '@/api/material'
 import { isNameValid, isNumberValid, notEmpty } from '@/utils/validates'
 import { parseNumber } from '@/utils/utils'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import Logger from 'chivy'
+
+const log = new Logger('views/table/basic-table')
 
 const calendarTypeOptions = [
   { key: 'CN', display_name: 'China' },
@@ -125,6 +154,7 @@ export default {
   },
   data() {
     return {
+      materials: [],
       tableKey: 0,
       list: null,
       total: 0,
@@ -143,7 +173,11 @@ export default {
       temp: {
         id: undefined,
         name: undefined,
-        needExpire: false
+        unit: undefined,
+        capacity: undefined,
+        price: 0,
+        formulaVos: [],
+        pricePerUnit: 0
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -172,6 +206,11 @@ export default {
         this.list = response.data
         this.total = response.totalRows
         this.listLoading = false
+      })
+    },
+    getMaterials() {
+      findAllMaterial().then(response => {
+        this.materials = response.data
       })
     },
     handleFilter() {
@@ -203,10 +242,15 @@ export default {
       this.temp = {
         id: undefined,
         name: undefined,
-        needExpire: false
+        unit: undefined,
+        capacity: undefined,
+        price: 0,
+        formulaVos: [],
+        pricePerUnit: 0
       }
     },
     handleCreate() {
+      this.getMaterials()
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
@@ -234,7 +278,9 @@ export default {
       })
     },
     handleUpdate(row) {
+      this.getMaterials()
       this.temp = Object.assign({}, row) // copy obj
+      log.info(JSON.stringify(this.temp))
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -332,6 +378,32 @@ export default {
     },
     parseNumber(number) {
       return parseNumber(number)
+    },
+    del(index) {
+      log.debug('del index = ' + JSON.stringify(this.temp.formulaVos[index]))
+      this.temp.formulaVos.splice(index, 1)
+    },
+    add(index) {
+      log.debug('add index = ' + index)
+    },
+    addFormula(index) {
+      log.debug('add formula index = ' + index)
+      const formula = {
+        'count': '',
+        'id': '',
+        'name': '',
+        'price': '',
+        'type': '原材料'
+      }
+      this.temp.formulaVos.push(formula)
+    },
+    showAdd() {
+      log.debug('length = ' + JSON.stringify(this.temp))
+      return this.temp.formulaVos.length === 0
+    },
+    cancleDialog() {
+      this.dialogFormVisible = false
+      this.getList()
     }
   }
 }

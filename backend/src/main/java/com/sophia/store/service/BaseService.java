@@ -12,11 +12,9 @@ import com.sophia.store.entity.po.Category;
 import com.sophia.store.entity.po.Food;
 import com.sophia.store.entity.po.Material;
 import com.sophia.store.entity.po.MaterialFormula;
-import com.sophia.store.entity.vo.BasicFormulaVo;
 import com.sophia.store.entity.vo.CategoryVo;
 import com.sophia.store.entity.vo.FoodVo;
 import com.sophia.store.entity.vo.FormulaVo;
-import com.sophia.store.entity.vo.MaterialFormulaVo;
 import com.sophia.store.utils.Constant;
 import lombok.extern.slf4j.Slf4j;
 
@@ -119,7 +117,6 @@ public abstract class BaseService {
             vo.setId(material.getId());
             vo.setName(material.getName());
             vo.setCount(formula.getCount());
-            vo.setMaterialFormulaId(formula.getId());
             vo.setType(Constant.MATERIAL);
             vo.setPrice(vo.getCount() * material.getPricePerUnit());
             formulaVos.add(vo);
@@ -135,7 +132,6 @@ public abstract class BaseService {
             vo.setId(basic.getId());
             vo.setName(basic.getName());
             vo.setCount(formula.getCount());
-            vo.setBasicFormulaId(formula.getId());
             vo.setType(Constant.BASIC);
             double price = basic.getMaterialFormulaSet().stream()
                     .mapToDouble(materialFormula -> materialFormula.getMaterial().getPricePerUnit() * materialFormula.getCount())
@@ -149,16 +145,13 @@ public abstract class BaseService {
     protected Set<MaterialFormula> convertMaterialFormula(Set<FormulaVo> formulaVos) {
         Set<MaterialFormula> materialFormulas = new HashSet<>();
         Set<FormulaVo> materialFormulaVos = formulaVos.stream().filter(formulaVo -> formulaVo.getType().equalsIgnoreCase(Constant.MATERIAL)).collect(Collectors.toSet());
-        //有可能不需要中级材料，所以需要判断是否为空
+        //有可能不需要原材料，所以需要判断是否为空
         if (materialFormulaVos.size() != 0) {
             for (FormulaVo formula : materialFormulaVos) {
                 MaterialFormula materialFormula = new MaterialFormula();
                 Optional<Material> optionalMaterial = materialDao.findById(formula.getId());
                 Material material = optionalMaterial.orElseGet(optionalMaterial::get);
                 materialFormula.setMaterial(material);
-                if (null != formula.getMaterialFormulaId()) {
-                    materialFormula.setId(formula.getMaterialFormulaId());
-                }
                 materialFormula.setCount(formula.getCount());
                 materialFormulas.add(materialFormula);
             }
@@ -169,15 +162,13 @@ public abstract class BaseService {
     protected Set<BasicFormula> convertBasicFormula(Set<FormulaVo> formulaVos) {
         Set<BasicFormula> basicFormulas = new HashSet<>();
         Set<FormulaVo> basicFormulaVos = formulaVos.stream().filter(formulaVo -> formulaVo.getType().equalsIgnoreCase(Constant.BASIC)).collect(Collectors.toSet());
+        //有可能不需要基础材料，所以需要判断是否为空
         if (basicFormulaVos.size() != 0) {
             for (FormulaVo formula : basicFormulaVos) {
                 BasicFormula basicFormula = new BasicFormula();
                 Optional<Basic> optionalBasic = basicDao.findById(formula.getId());
                 Basic basic = optionalBasic.orElseGet(optionalBasic::get);
                 basicFormula.setBasic(basic);
-                if (null != formula.getBasicFormulaId()) {
-                    basicFormula.setId(formula.getBasicFormulaId());
-                }
                 basicFormula.setCount(formula.getCount());
                 basicFormulas.add(basicFormula);
             }
@@ -189,9 +180,6 @@ public abstract class BaseService {
         Set<MaterialFormula> materialFormulas = new HashSet<>();
         formulaVos.forEach(formula -> {
             MaterialFormula vo = new MaterialFormula();
-            if (null != formula.getMaterialFormulaId()) {
-                vo.setId(formula.getMaterialFormulaId());
-            }
             vo.setCount(formula.getCount());
             Optional<Material> optionalMaterial = materialDao.findById(formula.getId());
             Material material = optionalMaterial.orElseGet(optionalMaterial::get);

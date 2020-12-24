@@ -62,7 +62,7 @@ class MiddleServiceTest {
                     idSet.add(materialId);
                     if (size != idSet.size()) {
                         formulaVo.setType(Constant.MATERIAL);
-                        formulaVo.setMaterialFormulaId(materialId);
+                        formulaVo.setId(materialId);
                         formulaVos.add(formulaVo);
                     }
                 }
@@ -79,7 +79,7 @@ class MiddleServiceTest {
                     idSet.add(basicId);
                     if (size != idSet.size()) {
                         formulaVo.setType(Constant.BASIC);
-                        formulaVo.setBasicFormulaId(basicId);
+                        formulaVo.setId(basicId);
                         formulaVos.add(formulaVo);
                     }
                 }
@@ -95,10 +95,8 @@ class MiddleServiceTest {
                     int size = materialIdSet.size();
                     materialIdSet.add(materialId);
                     if (size != materialIdSet.size()) {
-                        if (j % 2 == 0) {
-                            formulaVo.setType(Constant.MATERIAL);
-                            formulaVo.setMaterialFormulaId(materialId);
-                        }
+                        formulaVo.setType(Constant.MATERIAL);
+                        formulaVo.setId(materialId);
                         formulaVos.add(formulaVo);
                     }
                 }
@@ -110,15 +108,14 @@ class MiddleServiceTest {
                     int size = basicIdSet.size();
                     basicIdSet.add(basicId);
                     if (size != basicIdSet.size()) {
-                        if (j % 2 == 0) {
-                            formulaVo.setType(Constant.BASIC);
-                            formulaVo.setBasicFormulaId(basicId);
-                        }
+                        formulaVo.setType(Constant.BASIC);
+                        formulaVo.setId(basicId);
                         formulaVos.add(formulaVo);
                     }
                 }
                 vo.setFormulaVos(formulaVos);
             }
+            log.info("vo = {}", vo);
             service.add(vo);
         }
     }
@@ -126,7 +123,7 @@ class MiddleServiceTest {
     @Test
     void update() {
         MiddleVo vo = new MiddleVo();
-        vo.setId(1);
+        vo.setId(2);
         vo.setName("中级材料1");
         vo.setUnit("克");
         vo.setCapacity(1000);

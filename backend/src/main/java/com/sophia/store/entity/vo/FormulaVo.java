@@ -24,9 +24,9 @@ public class FormulaVo {
     private String name;
     @ApiModelProperty(value = "材料价格")
     private Float price;
-    @ApiModelProperty(value = "MaterialFormula编号")
-    private Integer materialFormulaId;
-    @ApiModelProperty(value = "BasicFormula编号")
-    private Integer basicFormulaId;
+//    @ApiModelProperty(value = "MaterialFormula编号")
+//    private Integer materialFormulaId;
+//    @ApiModelProperty(value = "BasicFormula编号")
+//    private Integer basicFormulaId;
 
 }
