@@ -221,7 +221,7 @@ export default {
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',
-              message: '创建分类[' + this.temp.name + ']',
+              message: '创建原材料[' + this.temp.name + ']',
               type: 'success',
               duration: 2000
             })
@@ -249,7 +249,7 @@ export default {
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',
-              message: '更新分类【' + tempData.name + '】成功',
+              message: '更新原材料【' + tempData.name + '】成功',
               type: 'success',
               duration: 2000
             })
@@ -262,7 +262,7 @@ export default {
       })
     },
     handleDelete(row, index) {
-      this.$confirm('此操作将永久删除分类【' + row.name + '】, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除原材料【' + row.name + '】, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -274,7 +274,7 @@ export default {
         deleteMaterial(data).then(() => {
           this.$notify({
             title: '成功',
-            message: '删除分类【' + row.name + '】成功',
+            message: '删除原材料【' + row.name + '】成功',
             type: 'success',
             duration: 2000
           })
@@ -282,7 +282,7 @@ export default {
         }).catch(() => {
           this.$notify({
             title: '失败',
-            message: '删除分类【' + row.name + '】失败',
+            message: '删除原材料【' + row.name + '】失败',
             type: 'error',
             duration: 2000
           })

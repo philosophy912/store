@@ -79,7 +79,7 @@ public class MiddleServiceImpl extends BaseService implements MiddleService {
 
     @Override
     public MiddleVo add(MiddleVo vo) {
-        log.info("name = {}", vo.getName());
+        log.debug("name = {}", vo.getName());
         List<Middle> middles = middleDao.findByName(vo.getName());
         if (middles.size() == 0) {
             Middle middle = new Middle();
@@ -90,6 +90,10 @@ public class MiddleServiceImpl extends BaseService implements MiddleService {
             Set<BasicFormula> basicFormulas = convertBasicFormula(vo.getFormulaVos());
             materialFormulas.forEach(formula -> materialFormulaDao.save(formula));
             basicFormulas.forEach(formula -> basicFormulaDao.save(formula));
+            if (materialFormulas.size() == 0 && basicFormulas.size() == 0) {
+                String error = "原材料和基础产品必须有一个";
+                throw new RuntimeException(error);
+            }
             middle.setMaterialFormulaSet(materialFormulas);
             middle.setBasicFormulaSet(basicFormulas);
             Middle dpt = middleDao.saveAndFlush(middle);
@@ -107,7 +111,7 @@ public class MiddleServiceImpl extends BaseService implements MiddleService {
         middle.setUnit(vo.getUnit());
         Set<MaterialFormula> materialFormulas = convertMaterialFormula(vo.getFormulaVos());
         Set<BasicFormula> basicFormulas = convertBasicFormula(vo.getFormulaVos());
-        if (!(materialFormulas.size() > 0 || basicFormulas.size() > 0)) {
+        if (materialFormulas.size() == 0 && basicFormulas.size() == 0) {
             String error = "必须包含至少一个原材料或者基础材料配方";
             throw new RuntimeException(error);
         }

@@ -52,7 +52,7 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 600px; margin-left:50px;">
         <el-form-item label="名称" prop="name">
           <el-input v-model="temp.name" />
         </el-form-item>
@@ -62,23 +62,40 @@
         <el-form-item label="单位" prop="unit">
           <el-input v-model="temp.unit" />
         </el-form-item>
-        <el-form-item label="价格(元)" prop="price">
-          <el-input v-model="temp.price" />
+        <el-form-item v-for="(formula, index) in temp.formulaVos" :key="index" :label="formula.type" label-width="80px">
+          <el-col :span="6">
+            <el-select v-if="formula.type == '原材料'" v-model="formula.id" placeholder="请选择">
+              <el-option v-for="item in materials" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
+            <el-select v-if="formula.type == '初级产品'" v-model="formula.id" placeholder="请选择">
+              <el-option v-for="item in basics" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
+          </el-col>
+          <el-col :span="2" class="count" style="text-align:center;">
+            <span>数量</span>
+          </el-col>
+          <el-col :span="6">
+            <el-input v-model="formula.count" autocomplete="off" />
+          </el-col>
+          <el-col :span="10" class="buttons" style="text-align:right;">
+            <el-button type="danger" size="medium" icon="el-icon-remove-outline" @click="del(index)" />
+            <el-button type="success" size="medium" icon="el-icon-circle-plus-outline" @click="showSelect()" />
+            <el-button type="primary" size="medium" icon="el-icon-circle-plus-outline" @click="add(index)" />
+          </el-col>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button @click="cancleDialog">取消</el-button>
+        <el-button v-show="showAdd()" type="success" @click="showSelect()">新增配方</el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">确认</el-button>
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
+    <el-dialog :visible.sync="dialogVisible" width="30%" title="提示">
+      <span>请选择添加的类型</span>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
+        <el-button type="success" @click="addFormula(0)">添加原材料</el-button>
+        <el-button type="primary" @click="addFormula(1)">添加初级产品</el-button>
       </span>
     </el-dialog>
   </div>
@@ -86,11 +103,16 @@
 
 <script>
 import { fetchList, createMiddle, updateMiddle, deleteMiddle } from '@/api/middle'
+import { findAllBasic } from '@/api/basic'
+import { findAllMaterial } from '@/api/material'
 import { isNameValid, isNumberValid, notEmpty } from '@/utils/validates'
 import { parseNumber } from '@/utils/utils'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import Logger from 'chivy'
+
+const log = new Logger('views/table/middle-table')
 
 const calendarTypeOptions = [
   { key: 'CN', display_name: 'China' },
@@ -129,9 +151,12 @@ export default {
   },
   data() {
     return {
+      materials: [],
+      basics: [],
       tableKey: 0,
       list: null,
       total: 0,
+      dialogVisible: false,
       listLoading: true,
       listQuery: {
         page: 1,
@@ -147,7 +172,11 @@ export default {
       temp: {
         id: undefined,
         name: undefined,
-        needExpire: false
+        unit: undefined,
+        capacity: undefined,
+        price: 0,
+        formulaVos: [],
+        pricePerUnit: 0
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -176,6 +205,16 @@ export default {
         this.list = response.data
         this.total = response.totalRows
         this.listLoading = false
+      })
+    },
+    getMaterials() {
+      findAllMaterial().then(response => {
+        this.materials = response.data
+      })
+    },
+    getBasics() {
+      findAllBasic().then(response => {
+        this.basics = response.data
       })
     },
     handleFilter() {
@@ -207,10 +246,16 @@ export default {
       this.temp = {
         id: undefined,
         name: undefined,
-        needExpire: false
+        unit: undefined,
+        capacity: undefined,
+        price: 0,
+        formulaVos: [],
+        pricePerUnit: 0
       }
     },
     handleCreate() {
+      this.getMaterials()
+      this.getBasics()
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
@@ -225,7 +270,7 @@ export default {
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',
-              message: '创建分类[' + this.temp.name + ']',
+              message: '创建中级产品[' + this.temp.name + ']',
               type: 'success',
               duration: 2000
             })
@@ -238,6 +283,8 @@ export default {
       })
     },
     handleUpdate(row) {
+      this.getMaterials()
+      this.getBasics()
       this.temp = Object.assign({}, row) // copy obj
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
@@ -253,7 +300,7 @@ export default {
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',
-              message: '更新分类【' + tempData.name + '】成功',
+              message: '更新中级产品【' + tempData.name + '】成功',
               type: 'success',
               duration: 2000
             })
@@ -266,7 +313,7 @@ export default {
       })
     },
     handleDelete(row, index) {
-      this.$confirm('此操作将永久删除分类【' + row.name + '】, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除中级产品【' + row.name + '】, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -278,7 +325,7 @@ export default {
         deleteMiddle(data).then(() => {
           this.$notify({
             title: '成功',
-            message: '删除分类【' + row.name + '】成功',
+            message: '删除中级产品【' + row.name + '】成功',
             type: 'success',
             duration: 2000
           })
@@ -286,32 +333,12 @@ export default {
         }).catch(() => {
           this.$notify({
             title: '失败',
-            message: '删除分类【' + row.name + '】失败',
+            message: '删除中级产品【' + row.name + '】失败',
             type: 'error',
             duration: 2000
           })
         })
       }).catch(() => {
-      })
-    },
-    handleFetchPv(pv) {
-      // fetchPv(pv).then(response => {
-      //   this.pvData = response.data.pvData
-      //   this.dialogPvVisible = true
-      // })
-    },
-    handleDownload() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
-        const data = this.formatJson(filterVal)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
       })
     },
     formatJson(filterVal) {
@@ -323,10 +350,6 @@ export default {
         }
       }))
     },
-    getSortClass: function(key) {
-      const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
-    },
     showExpire(status) {
       return status ? '需要' : '不需要'
     },
@@ -336,6 +359,39 @@ export default {
     },
     parseNumber(number) {
       return parseNumber(number)
+    },
+    del(index) {
+      log.debug('del index = ' + JSON.stringify(this.temp.formulaVos[index]))
+      this.temp.formulaVos.splice(index, 1)
+    },
+    add(index) {
+      log.debug('add index = ' + index)
+    },
+    addFormula(index) {
+      const formula = {
+        'count': '',
+        'id': '',
+        'name': '',
+        'price': ''
+      }
+      if (index === 1) {
+        formula.type = '初级产品'
+      } else {
+        formula.type = '原材料'
+      }
+      this.temp.formulaVos.push(formula)
+      this.dialogVisible = false
+    },
+    showAdd() {
+      log.debug('length = ' + JSON.stringify(this.temp))
+      return this.temp.formulaVos.length === 0
+    },
+    cancleDialog() {
+      this.dialogFormVisible = false
+      this.getList()
+    },
+    showSelect() {
+      this.dialogVisible = true
     }
   }
 }

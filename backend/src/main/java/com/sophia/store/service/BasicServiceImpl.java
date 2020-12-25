@@ -83,6 +83,10 @@ public class BasicServiceImpl extends BaseService implements BasicService {
             basic.setUnit(vo.getUnit());
             Set<MaterialFormula> materialFormulas = convert2MaterialFormula(vo.getFormulaVos());
             materialFormulas.forEach(formula -> materialFormulaDao.save(formula));
+            if(materialFormulas.size() == 0) {
+                String error = "必须存在一个原材料";
+                throw new RuntimeException(error);
+            }
             basic.setMaterialFormulaSet(materialFormulas);
             Basic dpt = basicDao.saveAndFlush(basic);
             return convert(dpt);
@@ -100,7 +104,7 @@ public class BasicServiceImpl extends BaseService implements BasicService {
         basic.setCapacity(vo.getCapacity());
         basic.setUnit(vo.getUnit());
         Set<MaterialFormula> materialFormulas = convert2MaterialFormula(vo.getFormulaVos());
-        if (materialFormulas.size() < 1) {
+        if (materialFormulas.size() == 0) {
             String error = "必须包含至少一个原材料配方";
             throw new RuntimeException(error);
         }

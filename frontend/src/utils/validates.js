@@ -8,7 +8,7 @@ const noSpecialCharacter = '^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$'
 // 正小数
 const twoPointNumber = '^[0-9]+(.[0-9]{2})$'
 const onePointNumber = '^[0-9]+(.[0-9]{1})$'
-const noPointNumber = '^[1-9]*$'
+const noPointNumber = '^[1-9][0-9]*$'
 
 export const isCategoryNameUsed = (rule, value, callback) => {
   log.debug('isCategoryNameUsed value = ' + JSON.stringify(value))
