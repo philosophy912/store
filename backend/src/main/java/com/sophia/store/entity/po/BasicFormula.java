@@ -36,7 +36,7 @@ public class BasicFormula implements Serializable {
     private Integer id;
     @Column(name = "count", nullable = false)
     @ApiModelProperty(value = "数量")
-    private Integer count;
+    private Float count;
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "basic_id", referencedColumnName = "id")
     @ApiModelProperty(value = "基础产品")

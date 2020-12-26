@@ -4,7 +4,7 @@ const log = new Logger('utils/validates')
 
 const regexMatch = (str, regex) => new RegExp(regex).test(str)
 // 不能有特殊字符
-const noSpecialCharacter = '^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$'
+const noSpecialCharacter = '^[a-zA-Z0-9_\u4e00-\u9fa5\\s（）()%]+$'
 // 正小数
 const twoPointNumber = '^[0-9]+(.[0-9]{2})$'
 const onePointNumber = '^[0-9]+(.[0-9]{1})$'

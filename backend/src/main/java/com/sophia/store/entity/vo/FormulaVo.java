@@ -17,16 +17,12 @@ public class FormulaVo {
     @ApiModelProperty(value = "材料编号")
     private Integer id;
     @ApiModelProperty(value = "材料数量")
-    private Integer count;
+    private Float count;
     @ApiModelProperty(value = "材料类型")
     private String type;
     @ApiModelProperty(value = "材料名字")
     private String name;
     @ApiModelProperty(value = "材料价格")
     private Float price;
-//    @ApiModelProperty(value = "MaterialFormula编号")
-//    private Integer materialFormulaId;
-//    @ApiModelProperty(value = "BasicFormula编号")
-//    private Integer basicFormulaId;
 
 }

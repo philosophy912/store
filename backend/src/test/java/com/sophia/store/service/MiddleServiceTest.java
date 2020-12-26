@@ -56,7 +56,7 @@ class MiddleServiceTest {
                 Set<Integer> idSet = new HashSet<>();
                 for (int j = 0; j < NumericUtils.randomInteger(5, 10); j++) {
                     FormulaVo formulaVo = new FormulaVo();
-                    formulaVo.setCount(NumericUtils.randomInteger(1, 5));
+                    formulaVo.setCount(NumericUtils.randomFloat(1, 5));
                     Integer materialId = NumericUtils.randomInteger(1, 100);
                     int size = idSet.size();
                     idSet.add(materialId);
@@ -73,7 +73,7 @@ class MiddleServiceTest {
                 Set<Integer> idSet = new HashSet<>();
                 for (int j = 0; j < NumericUtils.randomInteger(5, 10); j++) {
                     FormulaVo formulaVo = new FormulaVo();
-                    formulaVo.setCount(NumericUtils.randomInteger(1, 5));
+                    formulaVo.setCount(NumericUtils.randomFloat(1, 5));
                     Integer basicId = NumericUtils.randomInteger(3, 100);
                     int size = idSet.size();
                     idSet.add(basicId);
@@ -90,7 +90,7 @@ class MiddleServiceTest {
                 Set<Integer> materialIdSet = new HashSet<>();
                 for (int j = 0; j < NumericUtils.randomInteger(5, 10); j++) {
                     FormulaVo formulaVo = new FormulaVo();
-                    formulaVo.setCount(NumericUtils.randomInteger(1, 5));
+                    formulaVo.setCount(NumericUtils.randomFloat(1, 5));
                     Integer materialId = NumericUtils.randomInteger(1, 100);
                     int size = materialIdSet.size();
                     materialIdSet.add(materialId);
@@ -103,7 +103,7 @@ class MiddleServiceTest {
                 Set<Integer> basicIdSet = new HashSet<>();
                 for (int j = 0; j < NumericUtils.randomInteger(5, 10); j++) {
                     FormulaVo formulaVo = new FormulaVo();
-                    formulaVo.setCount(NumericUtils.randomInteger(1, 5));
+                    formulaVo.setCount(NumericUtils.randomFloat(1, 5));
                     Integer basicId = NumericUtils.randomInteger(1, 100);
                     int size = basicIdSet.size();
                     basicIdSet.add(basicId);
@@ -130,7 +130,7 @@ class MiddleServiceTest {
         Set<FormulaVo> formulaVos = new HashSet<>();
         for (int i = 0; i < 10; i++) {
             FormulaVo formulaVo = new FormulaVo();
-            formulaVo.setCount(5);
+            formulaVo.setCount(5f);
             formulaVo.setId(i + 1);
             if (i % 2 == 0) {
                 formulaVo.setType(Constant.MATERIAL);

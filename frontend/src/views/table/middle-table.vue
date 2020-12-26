@@ -10,9 +10,9 @@
       <el-table-column fixed type="expand">
         <template slot-scope="scope">
           <el-table :data="scope.row.formulaVos" border style="width: 100%">
-            <el-table-column prop="count" label="数量" align="center" />
             <el-table-column prop="type" label="类型" align="center" />
             <el-table-column prop="name" label="名称" align="center" />
+            <el-table-column prop="count" label="数量" align="center" />
           </el-table>
         </template>
       </el-table-column>
@@ -64,10 +64,10 @@
         </el-form-item>
         <el-form-item v-for="(formula, index) in temp.formulaVos" :key="index" :label="formula.type" label-width="80px">
           <el-col :span="6">
-            <el-select v-if="formula.type == '原材料'" v-model="formula.id" placeholder="请选择">
+            <el-select v-if="formula.type == '原材料'" v-model="formula.id" filterable placeholder="请选择">
               <el-option v-for="item in materials" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
-            <el-select v-if="formula.type == '初级产品'" v-model="formula.id" placeholder="请选择">
+            <el-select v-if="formula.type == '初级产品'" v-model="formula.id" filterable placeholder="请选择">
               <el-option v-for="item in basics" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
           </el-col>
@@ -80,7 +80,6 @@
           <el-col :span="10" class="buttons" style="text-align:right;">
             <el-button type="danger" size="medium" icon="el-icon-remove-outline" @click="del(index)" />
             <el-button type="success" size="medium" icon="el-icon-circle-plus-outline" @click="showSelect()" />
-            <el-button type="primary" size="medium" icon="el-icon-circle-plus-outline" @click="add(index)" />
           </el-col>
         </el-form-item>
       </el-form>
@@ -172,7 +171,7 @@ export default {
       temp: {
         id: undefined,
         name: undefined,
-        unit: undefined,
+        unit: '个',
         capacity: undefined,
         price: 0,
         formulaVos: [],
@@ -246,7 +245,7 @@ export default {
       this.temp = {
         id: undefined,
         name: undefined,
-        unit: undefined,
+        unit: '个',
         capacity: undefined,
         price: 0,
         formulaVos: [],
@@ -350,6 +349,10 @@ export default {
         }
       }))
     },
+    getSortClass: function(key) {
+      const sort = this.listQuery.sort
+      return sort === `+${key}` ? 'ascending' : 'descending'
+    },
     showExpire(status) {
       return status ? '需要' : '不需要'
     },
@@ -363,9 +366,6 @@ export default {
     del(index) {
       log.debug('del index = ' + JSON.stringify(this.temp.formulaVos[index]))
       this.temp.formulaVos.splice(index, 1)
-    },
-    add(index) {
-      log.debug('add index = ' + index)
     },
     addFormula(index) {
       const formula = {

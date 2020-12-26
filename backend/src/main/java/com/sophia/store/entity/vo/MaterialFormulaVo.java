@@ -18,7 +18,7 @@ public class MaterialFormulaVo {
     @ApiModelProperty(value = "编号")
     private Integer id;
     @ApiModelProperty(value = "数量")
-    private Integer count;
+    private Float count;
     @ApiModelProperty(value = "编号")
     private Integer materialId;
     @ApiModelProperty(value = "名字")

@@ -10,9 +10,9 @@
       <el-table-column fixed type="expand">
         <template slot-scope="scope">
           <el-table :data="scope.row.formulaVos" border style="width: 100%">
-            <el-table-column prop="count" label="数量" align="center" />
             <el-table-column prop="type" label="类型" align="center" />
             <el-table-column prop="name" label="名称" align="center" />
+            <el-table-column prop="count" label="数量" align="center" />
           </el-table>
         </template>
       </el-table-column>
@@ -69,7 +69,7 @@
         </el-form-item>
         <el-form-item v-for="(formula, index) in temp.formulaVos" :key="index" :label="formula.type" label-width="80px">
           <el-col :span="6">
-            <el-select v-model="formula.id" placeholder="请选择">
+            <el-select v-model="formula.id" filterable placeholder="请选择">
               <el-option v-for="item in materials" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
           </el-col>
@@ -82,7 +82,6 @@
           <el-col :span="10" class="buttons" style="text-align:right;">
             <el-button type="danger" size="medium" icon="el-icon-remove-outline" @click="del(index)" />
             <el-button type="success" size="medium" icon="el-icon-circle-plus-outline" @click="addFormula(index)" />
-            <el-button type="primary" size="medium" icon="el-icon-circle-plus-outline" @click="add(index)" />
           </el-col>
         </el-form-item>
       </el-form>
@@ -91,16 +90,6 @@
         <el-button v-show="showAdd()" type="success" @click="addFormula(0)">新增配方</el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">确认</el-button>
       </div>
-    </el-dialog>
-
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
-      </span>
     </el-dialog>
   </div>
 </template>
@@ -173,7 +162,7 @@ export default {
       temp: {
         id: undefined,
         name: undefined,
-        unit: undefined,
+        unit: '个',
         capacity: undefined,
         price: 0,
         formulaVos: [],
@@ -242,7 +231,7 @@ export default {
       this.temp = {
         id: undefined,
         name: undefined,
-        unit: undefined,
+        unit: '个',
         capacity: undefined,
         price: 0,
         formulaVos: [],
@@ -382,9 +371,6 @@ export default {
     del(index) {
       log.debug('del index = ' + JSON.stringify(this.temp.formulaVos[index]))
       this.temp.formulaVos.splice(index, 1)
-    },
-    add(index) {
-      log.debug('add index = ' + index)
     },
     addFormula(index) {
       log.debug('add formula index = ' + index)

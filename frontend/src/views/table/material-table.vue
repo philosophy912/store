@@ -143,7 +143,8 @@ export default {
       temp: {
         id: undefined,
         name: undefined,
-        needExpire: false
+        unit: '克',
+        capacity: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -203,7 +204,8 @@ export default {
       this.temp = {
         id: undefined,
         name: undefined,
-        needExpire: false
+        unit: '克',
+        capacity: undefined
       }
     },
     handleCreate() {
