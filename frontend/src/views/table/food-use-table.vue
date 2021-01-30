@@ -291,6 +291,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
+          log.debug('tempData = ' + JSON.stringify(tempData))
           // 使用数量大于剩余数量
           if (this.temp.useCount > this.temp.restCount) {
             this.dialogFormVisible = false
@@ -304,7 +305,8 @@ export default {
           } else {
             tempData.inDate = +new Date(tempData.inDate)
             tempData.expireDate = +new Date(tempData.expireDate)
-            tempData.restCount = tempData.count - tempData.useCount
+            // 剩余量
+            tempData.restCount = tempData.restCount - tempData.useCount
             updateFood(tempData).then(() => {
               this.dialogFormVisible = false
               this.$notify({
@@ -411,9 +413,6 @@ export default {
         return false
       }
     },
-    clearFiles() {
-      this.$refs.upload.clearFiles()
-    },
     changeCategory(value) {
       log.debug('category value is ' + JSON.stringify(value))
       this.listQuery.categoryId = value
@@ -421,7 +420,6 @@ export default {
       this.getList()
     },
     closeDialog() {
-      this.clearFiles()
     },
     clearCategory() {
       this.listQuery.categoryId = undefined
