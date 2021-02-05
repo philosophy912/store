@@ -35,7 +35,10 @@ public class MiddleServiceImpl extends BaseService implements MiddleService {
         formulaVos.addAll(materialFormulaVos);
         formulaVos.addAll(basicFormulaVos);
         vo.setFormulaVos(formulaVos);
-        double price = formulaVos.stream().mapToDouble(FormulaVo::getPrice).sum();
+        double price = 0;
+        for (FormulaVo formulaVo : formulaVos) {
+            price += formulaVo.getPrice() * formulaVo.getCount();
+        }
         vo.setPrice((float) price);
         vo.setPricePerUnit(vo.getPrice() / vo.getCapacity());
         return vo;
