@@ -71,7 +71,14 @@ public class FoodServiceImpl extends BaseService implements FoodService {
         Food originFood = convertFood(vo, Constant.UPDATE);
         Optional<Food> optionalFood = foodDao.findById(vo.getId());
         Food food = optionalFood.orElseGet(optionalFood::get);
+        // 由于更新内容可能是总量，所以需要计算剩余数量
+        if (Math.abs(food.getCount() - originFood.getCount()) > 0.00000001) {
+            // 总量变化，所以不需要计算值
+            Float changeValue = originFood.getCount() - food.getCount();
+            originFood.setRestCount(changeValue+ originFood.getRestCount());
+        }
         ObjectUtils.copyFiledValue(originFood, food);
+
         log.debug("update food and food is {}", food);
         foodDao.saveAndFlush(food);
         return vo;
