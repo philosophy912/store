@@ -265,19 +265,34 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createMiddle(this.temp).then(() => {
-            this.dialogFormVisible = false
+          var showStop = true
+          this.temp.formulaVos.forEach(formula => {
+            if (formula.count === '' || formula.id === '') {
+              showStop = false
+            }
+          })
+          if (showStop) {
+            createMiddle(this.temp).then(() => {
+              this.dialogFormVisible = false
+              this.$notify({
+                title: '成功',
+                message: '创建中级产品[' + this.temp.name + ']',
+                type: 'success',
+                duration: 2000
+              })
+              this.getList()
+            }).catch(() => {
+              this.dialogFormVisible = false
+              this.getList()
+            })
+          } else {
             this.$notify({
-              title: '成功',
-              message: '创建中级产品[' + this.temp.name + ']',
-              type: 'success',
+              title: '失败',
+              message: '请完整填写配方资料',
+              type: 'error',
               duration: 2000
             })
-            this.getList()
-          }).catch(() => {
-            this.dialogFormVisible = false
-            this.getList()
-          })
+          }
         }
       })
     },

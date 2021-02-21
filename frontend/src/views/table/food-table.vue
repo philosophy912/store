@@ -81,7 +81,7 @@
             ref="upload"
             class="avatar-uploader"
             drag
-            action="/upload"
+            action="/store/upload"
             list-type="picture"
             accept="image/png, image/jpeg, image/gif, image/bmp"
             :show-file-list="false"
@@ -288,22 +288,36 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          var showStop = true
           this.temp.restCount = this.temp.count
           this.temp.inDate = +new Date(this.temp.inDate)
           this.temp.expireDate = +new Date(this.temp.expireDate)
-          createFood(this.temp).then(() => {
-            this.dialogFormVisible = false
+          log.info(JSON.stringify(this.temp))
+          if (this.temp.name === '' || this.temp.name === undefined || this.temp.count === 0 || this.temp.categoryId === undefined) {
+            showStop = false
+          }
+          if (showStop) {
+            createFood(this.temp).then(() => {
+              this.dialogFormVisible = false
+              this.$notify({
+                title: '成功',
+                message: '创建耗材[' + this.temp.name + ']',
+                type: 'success',
+                duration: 2000
+              })
+              this.getList()
+            }).catch(() => {
+              this.dialogFormVisible = false
+              this.getList()
+            })
+          } else {
             this.$notify({
-              title: '成功',
-              message: '创建耗材[' + this.temp.name + ']',
-              type: 'success',
+              title: '失败',
+              message: '请检查填写资料的完整性',
+              type: 'error',
               duration: 2000
             })
-            this.getList()
-          }).catch(() => {
-            this.dialogFormVisible = false
-            this.getList()
-          })
+          }
         }
       })
     },
