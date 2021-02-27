@@ -5,6 +5,7 @@ import com.philosophy.base.util.StringsUtils;
 import com.sophia.store.entity.vo.CategoryVo;
 import com.sophia.store.entity.vo.PageResponse;
 import com.sophia.store.entity.vo.Response;
+import com.sophia.store.log.Log;
 import com.sophia.store.service.CategoryService;
 import com.sophia.store.utils.Constant;
 import com.sophia.store.utils.PageUtils;
@@ -91,6 +92,7 @@ public class CategoryController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ApiOperation(value = "添加分类", notes = "其中name和timestamp不能为空")
+    @Log("添加分类")
     public Response create(@RequestBody CategoryVo vo) {
         Response response = new Response();
         String name = vo.getName();
@@ -113,6 +115,7 @@ public class CategoryController {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ApiOperation(value = "更新分类", notes = "仅能更新分类名称和是否填写过期信息")
+    @Log("更新分类")
     public Response update(@RequestBody CategoryVo vo) {
         Response response = new Response();
         String name = vo.getName();
@@ -135,6 +138,7 @@ public class CategoryController {
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ApiOperation(value = "删除分类", notes = "删除分类，该分类下不能允许有耗材存在")
+    @Log("删除分类")
     public Response delete(@RequestBody CategoryVo vo) {
         Response response = new Response();
         String name = vo.getName();

@@ -4,6 +4,7 @@ import com.philosophy.base.util.StringsUtils;
 import com.sophia.store.entity.vo.BasicVo;
 import com.sophia.store.entity.vo.PageResponse;
 import com.sophia.store.entity.vo.Response;
+import com.sophia.store.log.Log;
 import com.sophia.store.service.BasicService;
 import com.sophia.store.utils.Constant;
 import com.sophia.store.utils.PageUtils;
@@ -88,7 +89,8 @@ public class BasicController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    @ApiOperation(value = "添加分类", notes = "其中name和timestamp不能为空")
+    @ApiOperation(value = "添加初级材料", notes = "其中name和timestamp不能为空")
+    @Log("添加初级材料")
     public Response create(@RequestBody BasicVo vo) {
         Response response = new Response();
         String name = vo.getName();
@@ -110,7 +112,8 @@ public class BasicController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    @ApiOperation(value = "更新分类", notes = "仅能更新分类名称和是否填写过期信息")
+    @ApiOperation(value = "更新初级材料", notes = "仅能更新分类名称和是否填写过期信息")
+    @Log("更新初级材料")
     public Response update(@RequestBody BasicVo vo) {
         Response response = new Response();
         String name = vo.getName();
@@ -132,7 +135,8 @@ public class BasicController {
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    @ApiOperation(value = "删除分类", notes = "删除分类，该分类下不能允许有耗材存在")
+    @ApiOperation(value = "删除初级材料", notes = "删除分类，该分类下不能允许有耗材存在")
+    @Log("删除初级材料")
     public Response delete(@RequestBody BasicVo vo) {
         Response response = new Response();
         String name = vo.getName();

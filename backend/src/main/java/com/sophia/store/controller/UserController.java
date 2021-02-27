@@ -5,6 +5,7 @@ import com.sophia.store.entity.vo.Response;
 import com.sophia.store.entity.vo.RolesVo;
 import com.sophia.store.entity.vo.TokenVo;
 import com.sophia.store.entity.vo.UserVo;
+import com.sophia.store.log.Log;
 import com.sophia.store.utils.Constant;
 import com.sophia.store.utils.JwtTokenUtil;
 import io.swagger.annotations.Api;
@@ -38,6 +39,7 @@ public class UserController {
     // 登陆接口，假登陆，只是为了生成token
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ApiOperation(value = "登陆")
+    @Log("登陆")
     public Response login(@RequestBody UserVo userVo) {
         Response response = new Response();
         log.debug("user[{}] try to login", userVo.getUsername());
@@ -73,6 +75,7 @@ public class UserController {
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     @ApiOperation(value = "注销")
+    @Log("注销")
     public Response logout(@RequestHeader("X-Token") String token) {
         Response response = new Response();
         DecodedJWT decodedJWT = JwtTokenUtil.verify(token);

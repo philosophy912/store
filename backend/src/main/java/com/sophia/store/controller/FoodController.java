@@ -5,6 +5,7 @@ import com.philosophy.base.util.StringsUtils;
 import com.sophia.store.entity.vo.FoodVo;
 import com.sophia.store.entity.vo.PageResponse;
 import com.sophia.store.entity.vo.Response;
+import com.sophia.store.log.Log;
 import com.sophia.store.service.FoodService;
 import com.sophia.store.utils.Constant;
 import com.sophia.store.utils.PageUtils;
@@ -84,6 +85,7 @@ public class FoodController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ApiOperation(value = "添加耗材", notes = "其中name和timestamp不能为空")
+    @Log("添加耗材")
     public Response create(@RequestBody FoodVo vo) {
         Response response = new Response();
         try {
@@ -100,6 +102,7 @@ public class FoodController {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ApiOperation(value = "更新耗材", notes = "仅能更新耗材名称")
+    @Log("更新耗材")
     public Response update(@RequestBody FoodVo vo) {
         Response response = new Response();
         String name = vo.getName();
@@ -122,6 +125,7 @@ public class FoodController {
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ApiOperation(value = "删除耗材", notes = "删除耗材")
+    @Log("删除耗材")
     public Response delete(@RequestBody FoodVo vo) {
         Response response = new Response();
         String name = vo.getName();

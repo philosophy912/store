@@ -5,10 +5,10 @@ server:
 logging:
   level:
     root: info
-    com.sophia.store.service: debug
-    com.sophia.store.controller: debug
-    com.sophia.store.config: debug
-    com.sophia.store.utils: debug
+    com.sophia.store.service: info
+    com.sophia.store.controller: info
+    com.sophia.store.config: info
+    com.sophia.store.utils: info
 
 spring:
   application:
