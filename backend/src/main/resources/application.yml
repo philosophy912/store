@@ -5,14 +5,14 @@ server:
 logging:
   level:
     root: info
-    com.sophia.store.service: info
-    com.sophia.store.controller: info
-    com.sophia.store.config: info
-    com.sophia.store.utils: info
+    com.sophia.store.service: debug
+    com.sophia.store.controller: debug
+    com.sophia.store.config: debug
+    com.sophia.store.utils: debug
 
 spring:
-  application:
-    name: springfox-swagger
+#  application:
+#    name: springfox-swagger
   servlet:
     multipart:
       # auto upload file switch, default enable
@@ -30,6 +30,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/store?setUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+#    username: lizhe
+#    password: Zheli_123456
     username: root
     password: root
     # url: jdbc:mysql://10.100.193.82:9999/store?setUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
@@ -48,12 +50,13 @@ spring:
         event:
           merge.entity_copy_observer: allow
 
-upload_file: E:/Work/store/backend/upload_file/
+#upload_file: /var/services/homes/lizhe/Drive/Drive/Website/store/upload_file/
+upload_file: E:/store/upload_file/
 # upload_file: D:/Workspace/github/store/backend/upload_file/
 
-swagger:
-  enable: false
-  application-name: ${spring.application.name}
-  application-version: 1.0.0
-  application-description: 设备管理系统
-  try-host: http://localhost:${server.port}
+#swagger:
+#  enable: false
+#  application-name: ${spring.application.name}
+#  application-version: 1.0.0
+#  application-description: 设备管理系统
+#  try-host: http://localhost:${server.port}

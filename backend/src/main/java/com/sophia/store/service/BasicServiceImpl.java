@@ -29,13 +29,17 @@ public class BasicServiceImpl extends BaseService implements BasicService {
         vo.setName(basic.getName());
         vo.setUnit(basic.getUnit());
         Set<FormulaVo> formulaVos = convertMaterialFormulaVo(basic.getMaterialFormulaSet());
+        log.debug("formulaVos is {}", formulaVos);
         vo.setFormulaVos(formulaVos);
-        double price = formulaVos.stream().mapToDouble(FormulaVo::getPrice).sum();
+        float price = 0f;
+        for (FormulaVo formulaVo : formulaVos) {
+            price += formulaVo.getCount() * formulaVo.getPrice();
+        }
+        log.debug("price is {}", price);
         vo.setPrice((float) price);
         vo.setPricePerUnit(vo.getPrice() / vo.getCapacity());
         return vo;
     }
-
 
 
     @Override
@@ -60,6 +64,7 @@ public class BasicServiceImpl extends BaseService implements BasicService {
             return null;
         }, pageable);
         basics.forEach(basic -> basicVos.add(convert(basic)));
+        log.debug("basicvos is {}", basicVos);
         return basicVos;
     }
 
@@ -76,14 +81,14 @@ public class BasicServiceImpl extends BaseService implements BasicService {
     @Override
     public BasicVo add(BasicVo vo) {
         List<Basic> basics = basicDao.findByName(vo.getName());
-        if (basics.size() == 0) {
+        if (basics.isEmpty()) {
             Basic basic = new Basic();
             basic.setName(vo.getName());
             basic.setCapacity(vo.getCapacity());
             basic.setUnit(vo.getUnit());
             Set<MaterialFormula> materialFormulas = convert2MaterialFormula(vo.getFormulaVos());
-            materialFormulas.forEach(formula -> materialFormulaDao.save(formula));
-            if(materialFormulas.size() == 0) {
+            materialFormulaDao.saveAll(materialFormulas);
+            if (materialFormulas.isEmpty()) {
                 String error = "必须存在一个原材料";
                 throw new RuntimeException(error);
             }
@@ -95,7 +100,6 @@ public class BasicServiceImpl extends BaseService implements BasicService {
     }
 
 
-
     @Override
     public BasicVo update(BasicVo vo) {
         Optional<Basic> optionalBasic = basicDao.findById(vo.getId());
@@ -104,16 +108,15 @@ public class BasicServiceImpl extends BaseService implements BasicService {
         basic.setCapacity(vo.getCapacity());
         basic.setUnit(vo.getUnit());
         Set<MaterialFormula> materialFormulas = convert2MaterialFormula(vo.getFormulaVos());
-        if (materialFormulas.size() == 0) {
+        if (materialFormulas.isEmpty()) {
             String error = "必须包含至少一个原材料配方";
             throw new RuntimeException(error);
         }
-        materialFormulas.forEach(formula -> materialFormulaDao.save(formula));
+        materialFormulaDao.saveAll(materialFormulas);
         basic.setMaterialFormulaSet(materialFormulas);
         Basic dpt = basicDao.saveAndFlush(basic);
         return convert(dpt);
     }
-
 
 
     @Override
@@ -121,9 +124,7 @@ public class BasicServiceImpl extends BaseService implements BasicService {
         Optional<Basic> optionalBasic = basicDao.findById(vo.getId());
         Basic basic = optionalBasic.orElseGet(optionalBasic::get);
         Set<MaterialFormula> materialFormulaSet = basic.getMaterialFormulaSet();
-        for (MaterialFormula formula : materialFormulaSet) {
-            materialFormulaDao.delete(formula);
-        }
+        materialFormulaDao.deleteAll(materialFormulaSet);
         basicDao.delete(basic);
         return vo;
     }

@@ -1,3 +1,7 @@
+/**
+ * @author lizhe
+ * @date 2020/11/20 14:54
+ **/
 package com.sophia.store.controller;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -5,11 +9,8 @@ import com.sophia.store.entity.vo.Response;
 import com.sophia.store.entity.vo.RolesVo;
 import com.sophia.store.entity.vo.TokenVo;
 import com.sophia.store.entity.vo.UserVo;
-import com.sophia.store.log.Log;
 import com.sophia.store.utils.Constant;
 import com.sophia.store.utils.JwtTokenUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -22,14 +23,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author lizhe
- * @date 2020/11/20 14:54
- **/
+
 @RestController
 @RequestMapping("/store/user")
 @Slf4j
-@Api(value = "登陆接口", tags = {"登陆管理"})
 public class UserController {
 
     private static final String USERNAME = "username";
@@ -38,8 +35,6 @@ public class UserController {
 
     // 登陆接口，假登陆，只是为了生成token
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    @ApiOperation(value = "登陆")
-    @Log("登陆")
     public Response login(@RequestBody UserVo userVo) {
         Response response = new Response();
         log.debug("user[{}] try to login", userVo.getUsername());
@@ -54,7 +49,6 @@ public class UserController {
     }
 
     @RequestMapping(value = "/info", method = RequestMethod.GET)
-    @ApiOperation(value = "获取token信息")
     public Response info(@RequestParam String token) {
         Response response = new Response();
         try {
@@ -74,8 +68,6 @@ public class UserController {
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    @ApiOperation(value = "注销")
-    @Log("注销")
     public Response logout(@RequestHeader("X-Token") String token) {
         Response response = new Response();
         DecodedJWT decodedJWT = JwtTokenUtil.verify(token);

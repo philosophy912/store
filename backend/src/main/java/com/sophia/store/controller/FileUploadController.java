@@ -4,8 +4,6 @@ import com.philosophy.base.util.FilesUtils;
 import com.philosophy.image.util.ImageUtils;
 import com.sophia.store.entity.vo.Response;
 import com.sophia.store.utils.Constant;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +20,6 @@ import java.util.Arrays;
 
 @RestController
 @Slf4j
-@Api(value = "文件上传接口", tags = {"文件上传"})
 public class FileUploadController {
 
     @Value(("${upload_file}"))
@@ -38,7 +35,6 @@ public class FileUploadController {
 
     @SneakyThrows
     @PostMapping("/store/upload")
-    @ApiOperation(value = "上传文件")
     public Response singleFileUpload(@RequestParam("file") MultipartFile file) {
         Response response = new Response();
         String originFileName = file.getOriginalFilename();

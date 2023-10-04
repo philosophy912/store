@@ -1,9 +1,10 @@
-package com.sophia.store.utils;
-
 /**
  * @author lizhe
  * @date 2020/11/20 15:02
  **/
+package com.sophia.store.utils;
+
+
 public class Constant {
     public static final Integer OK = 20000;
     public static final Integer ILLEGAL_TOKEN = 50008;

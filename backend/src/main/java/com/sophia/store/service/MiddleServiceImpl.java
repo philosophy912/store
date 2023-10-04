@@ -27,7 +27,9 @@ public class MiddleServiceImpl extends BaseService implements MiddleService {
         MiddleVo vo = new MiddleVo();
         vo.setId(middle.getId());
         vo.setCapacity(middle.getCapacity());
-        vo.setName(middle.getName());
+        String name = middle.getName();
+        log.debug("middle name is {}", name);
+        vo.setName(name);
         vo.setUnit(middle.getUnit());
         Set<FormulaVo> formulaVos = new HashSet<>();
         Set<FormulaVo> materialFormulaVos = convertMaterialFormulaVo(middle.getMaterialFormulaSet());
@@ -35,11 +37,12 @@ public class MiddleServiceImpl extends BaseService implements MiddleService {
         formulaVos.addAll(materialFormulaVos);
         formulaVos.addAll(basicFormulaVos);
         vo.setFormulaVos(formulaVos);
-        double price = 0;
+        log.debug("formula vos is {}", formulaVos);
+        float price = 0;
         for (FormulaVo formulaVo : formulaVos) {
             price += formulaVo.getPrice() * formulaVo.getCount();
         }
-        vo.setPrice((float) price);
+        vo.setPrice(price);
         vo.setPricePerUnit(vo.getPrice() / vo.getCapacity());
         return vo;
     }
@@ -84,16 +87,16 @@ public class MiddleServiceImpl extends BaseService implements MiddleService {
     public MiddleVo add(MiddleVo vo) {
         log.debug("name = {}", vo.getName());
         List<Middle> middles = middleDao.findByName(vo.getName());
-        if (middles.size() == 0) {
+        if (middles.isEmpty()) {
             Middle middle = new Middle();
             middle.setName(vo.getName());
             middle.setCapacity(vo.getCapacity());
             middle.setUnit(vo.getUnit());
             Set<MaterialFormula> materialFormulas = convertMaterialFormula(vo.getFormulaVos());
             Set<BasicFormula> basicFormulas = convertBasicFormula(vo.getFormulaVos());
-            materialFormulas.forEach(formula -> materialFormulaDao.save(formula));
-            basicFormulas.forEach(formula -> basicFormulaDao.save(formula));
-            if (materialFormulas.size() == 0 && basicFormulas.size() == 0) {
+            materialFormulaDao.saveAll(materialFormulas);
+            basicFormulaDao.saveAll(basicFormulas);
+            if (materialFormulas.isEmpty() && basicFormulas.isEmpty()) {
                 String error = "原材料和基础产品必须有一个";
                 throw new RuntimeException(error);
             }
@@ -114,15 +117,16 @@ public class MiddleServiceImpl extends BaseService implements MiddleService {
         middle.setUnit(vo.getUnit());
         Set<MaterialFormula> materialFormulas = convertMaterialFormula(vo.getFormulaVos());
         Set<BasicFormula> basicFormulas = convertBasicFormula(vo.getFormulaVos());
-        if (materialFormulas.size() == 0 && basicFormulas.size() == 0) {
+        if (materialFormulas.isEmpty() && basicFormulas.isEmpty()) {
             String error = "必须包含至少一个原材料或者基础材料配方";
             throw new RuntimeException(error);
         }
-        materialFormulas.forEach(formula -> materialFormulaDao.save(formula));
-        basicFormulas.forEach(formula -> basicFormulaDao.save(formula));
+        materialFormulaDao.saveAll(materialFormulas);
+        basicFormulaDao.saveAll(basicFormulas);
         middle.setMaterialFormulaSet(materialFormulas);
         middle.setBasicFormulaSet(basicFormulas);
         Middle dpt = middleDao.saveAndFlush(middle);
+        log.debug("dpt is {}", dpt);
         return convert(dpt);
     }
 
@@ -131,9 +135,9 @@ public class MiddleServiceImpl extends BaseService implements MiddleService {
         Optional<Middle> optionalMiddle = middleDao.findById(vo.getId());
         Middle middle = optionalMiddle.orElseGet(optionalMiddle::get);
         Set<BasicFormula> basicFormulaSet = middle.getBasicFormulaSet();
-        basicFormulaSet.forEach(formula -> basicFormulaDao.delete(formula));
+        basicFormulaDao.deleteAll(basicFormulaSet);
         Set<MaterialFormula> materialFormulaSet = middle.getMaterialFormulaSet();
-        materialFormulaSet.forEach(formula -> materialFormulaDao.delete(formula));
+        materialFormulaDao.deleteAll(materialFormulaSet);
         middleDao.delete(middle);
         return vo;
     }

@@ -17,6 +17,7 @@ export function createMiddle(data) {
 }
 
 export function updateMiddle(data) {
+  // console.log(JSON.stringify(data))
   return request({
     url: '/middle/update',
     method: 'post',

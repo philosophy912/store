@@ -1,3 +1,7 @@
+/**
+ * @author lizhe
+ * @date 2020/12/3 17:49
+ **/
 package com.sophia.store.utils;
 
 import lombok.SneakyThrows;
@@ -7,13 +11,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author lizhe
- * @date 2020/12/3 17:49
- **/
+
 public final class ObjectUtils {
     /**
-     * 把origin的非null的值拷贝的哦target中
+     * 把origin的非null的值拷贝到target中
      *
      * @param origin 原始类
      * @param target 目标类
@@ -39,7 +40,7 @@ public final class ObjectUtils {
                     if (null != value) {
                         if (value instanceof HashSet) {
                             Set<?> set = (Set<?>) value;
-                            if (set.size() > 0) {
+                            if (!set.isEmpty()) {
                                 targetField.set(target, value);
                             }
                         } else {

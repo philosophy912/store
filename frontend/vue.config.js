@@ -39,28 +39,28 @@ module.exports = {
       errors: true
     },
     proxy: {
-      '/images/*': {
+      '^/images/*': {
         target: server,
         changeOrigin: true,
-        pathReWtire: {
+        pathReWrite: {
           '^/images/*': ''
         }
-      }
+      },
+      '^/store/*': {
+        target: server,
+        changeOrigin: true,
+        pathReWrite: {
+          '^/store/*': ''
+        }
+      },
     },
     // proxy:{
-    //   '/user/*': {
-    //     target: server,
-    //     changeOrigin: true,
-    //     pathReWtire: {
-    //       '^/user/*': ''
-    //     }
-    //   },
     //   "/department/*": {
     //     target: server,
     //     changeOrigin: true,
     //     pathReWtire: {
     //       '^/department/*': ''
-    //     } 
+    //     }
     //   }
     // },
     before: require('./mock/mock-server.js')

@@ -68,7 +68,7 @@ public class MaterialServiceImpl extends BaseService implements MaterialService 
     @Override
     public MaterialVo add(MaterialVo vo) {
         List<Material> materials = materialDao.findByName(vo.getName());
-        if (materials.size() == 0) {
+        if (materials.isEmpty()) {
             Material material = new Material();
             material.setCapacity(vo.getCapacity());
             material.setPrice(vo.getPrice());

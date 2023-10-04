@@ -112,15 +112,20 @@ public abstract class BaseService {
     protected Set<FormulaVo> convertMaterialFormulaVo(Set<MaterialFormula> materialFormulas) {
         Set<FormulaVo> formulaVos = new HashSet<>();
         materialFormulas.forEach(formula -> {
+            log.debug("formula is {}", formula);
             FormulaVo vo = new FormulaVo();
             Material material = formula.getMaterial();
             vo.setId(material.getId());
             vo.setName(material.getName());
             vo.setCount(formula.getCount());
             vo.setType(Constant.MATERIAL);
-            vo.setPrice(vo.getCount() * material.getPricePerUnit());
+            vo.setPrice(material.getPricePerUnit());
+//            vo.setPrice(vo.getCount() * material.getPricePerUnit());
+            log.debug("material is {}", material);
+            log.debug("vo is {}", vo);
             formulaVos.add(vo);
         });
+        log.debug("convertMaterialFormulaVo result is {}", formulaVos);
         return formulaVos;
     }
 
@@ -139,6 +144,7 @@ public abstract class BaseService {
             vo.setPrice((float) price);
             formulaVos.add(vo);
         });
+        log.debug("convertBasicFormulaVo result is {}", formulaVos);
         return formulaVos;
     }
 
@@ -146,7 +152,7 @@ public abstract class BaseService {
         Set<MaterialFormula> materialFormulas = new HashSet<>();
         Set<FormulaVo> materialFormulaVos = formulaVos.stream().filter(formulaVo -> formulaVo.getType().equalsIgnoreCase(Constant.MATERIAL)).collect(Collectors.toSet());
         //有可能不需要原材料，所以需要判断是否为空
-        if (materialFormulaVos.size() != 0) {
+        if (!materialFormulaVos.isEmpty()) {
             for (FormulaVo formula : materialFormulaVos) {
                 MaterialFormula materialFormula = new MaterialFormula();
                 Optional<Material> optionalMaterial = materialDao.findById(formula.getId());
@@ -163,7 +169,7 @@ public abstract class BaseService {
         Set<BasicFormula> basicFormulas = new HashSet<>();
         Set<FormulaVo> basicFormulaVos = formulaVos.stream().filter(formulaVo -> formulaVo.getType().equalsIgnoreCase(Constant.BASIC)).collect(Collectors.toSet());
         //有可能不需要基础材料，所以需要判断是否为空
-        if (basicFormulaVos.size() != 0) {
+        if (!basicFormulaVos.isEmpty()) {
             for (FormulaVo formula : basicFormulaVos) {
                 BasicFormula basicFormula = new BasicFormula();
                 Optional<Basic> optionalBasic = basicDao.findById(formula.getId());

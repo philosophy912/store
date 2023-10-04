@@ -1,18 +1,12 @@
 package com.sophia.store.controller;
 
 import com.philosophy.base.util.StringsUtils;
-import com.sophia.store.entity.vo.BasicVo;
 import com.sophia.store.entity.vo.MiddleVo;
 import com.sophia.store.entity.vo.PageResponse;
 import com.sophia.store.entity.vo.Response;
-import com.sophia.store.log.Log;
-import com.sophia.store.service.BasicService;
 import com.sophia.store.service.MiddleService;
 import com.sophia.store.utils.Constant;
 import com.sophia.store.utils.PageUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,14 +24,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/store/middle")
 @Slf4j
-@Api(value = "高级产品管理接口", tags = {"高级产品管理"})
 public class MiddleController {
     @Resource
     private MiddleService middleService;
 
 
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    @ApiOperation(value = "查找所有的分类信息")
     public Response findAll() {
         Response response = new Response();
         try {
@@ -53,11 +45,10 @@ public class MiddleController {
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    @ApiOperation(value = "分页查找分类的列表")
-    public PageResponse fetchList(@ApiParam(value = "页数", required = true, example = "1") @RequestParam int page,
-                                  @ApiParam(value = "每页数量", required = true, example = "10") @RequestParam int limit,
-                                  @ApiParam(value = "查询的名字", example = "部门1") @RequestParam(required = false) String name,
-                                  @ApiParam(value = "排序方式", example = "+id/-id") @RequestParam(required = false) String sort) {
+    public PageResponse fetchList(@RequestParam int page,
+                                  @RequestParam int limit,
+                                  @RequestParam(required = false) String name,
+                                  @RequestParam(required = false) String sort) {
         PageResponse response = new PageResponse();
         Pageable pageable;
         if (StringsUtils.isNotEmpty(sort)) {
@@ -86,13 +77,12 @@ public class MiddleController {
             response.setCode(Constant.NOK);
             response.setMessage("查询失败");
             response.setErrorInfo(e.getMessage());
+//            e.printStackTrace();
         }
         return response;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    @ApiOperation(value = "添加中级产品", notes = "其中name和timestamp不能为空")
-    @Log("添加中级产品")
     public Response create(@RequestBody MiddleVo vo) {
         Response response = new Response();
         String name = vo.getName();
@@ -114,8 +104,6 @@ public class MiddleController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    @ApiOperation(value = "更新中级产品", notes = "仅能更新分类名称和是否填写过期信息")
-    @Log("更新中级产品")
     public Response update(@RequestBody MiddleVo vo) {
         Response response = new Response();
         String name = vo.getName();
@@ -132,13 +120,12 @@ public class MiddleController {
             response.setCode(Constant.NOK);
             response.setMessage("更新失败, 错误原因【" + e.getMessage() + "】");
             response.setErrorInfo(e.getMessage());
+//            e.printStackTrace();
         }
         return response;
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    @ApiOperation(value = "删除中级产品", notes = "删除分类，该分类下不能允许有耗材存在")
-    @Log("删除中级产品")
     public Response delete(@RequestBody MiddleVo vo) {
         Response response = new Response();
         String name = vo.getName();

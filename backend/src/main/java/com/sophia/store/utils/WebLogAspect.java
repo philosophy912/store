@@ -1,3 +1,7 @@
+/**
+ * @author lizhe
+ * @date 2020/11/26 13:51
+ **/
 package com.sophia.store.utils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +19,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
-/**
- * @author lizhe
- * @date 2020/11/26 13:51
- **/
+
 @Aspect
 @Component
 @Slf4j

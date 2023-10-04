@@ -44,7 +44,7 @@
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">编辑</el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">删除</el-button>
+          <el-button v-if="row.status!=='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -64,10 +64,10 @@
         </el-form-item>
         <el-form-item v-for="(formula, index) in temp.formulaVos" :key="index" :label="formula.type" label-width="80px">
           <el-col :span="6">
-            <el-select v-if="formula.type == '原材料'" v-model="formula.id" filterable placeholder="请选择">
+            <el-select v-if="formula.type === '原材料'" v-model="formula.id" filterable placeholder="请选择">
               <el-option v-for="item in materials" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
-            <el-select v-if="formula.type == '初级产品'" v-model="formula.id" filterable placeholder="请选择">
+            <el-select v-if="formula.type === '初级产品'" v-model="formula.id" filterable placeholder="请选择">
               <el-option v-for="item in basics" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
           </el-col>
@@ -265,7 +265,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          var showStop = true
+          let showStop = true;
           this.temp.formulaVos.forEach(formula => {
             if (formula.count === '' || formula.id === '') {
               showStop = false
@@ -309,7 +309,12 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          // 转换字符串为数字
+          this.temp.formulaVos.forEach(formula => {
+            formula.count = Number(formula.count)
+          })
           const tempData = Object.assign({}, this.temp)
+          // console.log("this.temp is ==> " + JSON.stringify(this.temp))
           updateMiddle(tempData).then(() => {
             this.dialogFormVisible = false
             this.$notify({

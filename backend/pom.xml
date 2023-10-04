@@ -10,13 +10,13 @@
     </parent>
     <groupId>com.sophia</groupId>
     <artifactId>store</artifactId>
-    <version>1.2.4</version>
+    <version>1.2.6</version>
     <name>store</name>
     <description>Demo project for Spring Boot</description>
 
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
+<!--    <properties>-->
+<!--        <java.version>1.8</java.version>-->
+<!--    </properties>-->
 
     <dependencies>
         <dependency>
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.philosophy</groupId>
             <artifactId>sophia</artifactId>
-            <version>3.2.0</version>
+            <version>3.2.3</version>
         </dependency>
         <dependency>
             <groupId>com.auth0</groupId>
@@ -67,6 +67,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -78,11 +79,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>3.0.0</version>
         </dependency>
     </dependencies>
 
@@ -144,29 +140,29 @@
 <!--                    </execution>-->
 <!--                </executions>-->
 <!--            </plugin>-->
-            <plugin>
-                <!--maven-resources-plugin：maven复制文件插件-->
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-resource</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <!--输出文件路径-->
-                            <outputDirectory>${basedir}\src\main\resources\static</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <!--前端代码地址-->
-                                    <directory>${basedir}/../frontend/dist</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                &lt;!&ndash;maven-resources-plugin：maven复制文件插件&ndash;&gt;-->
+<!--                <artifactId>maven-resources-plugin</artifactId>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>copy-resource</id>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>copy-resources</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            &lt;!&ndash;输出文件路径&ndash;&gt;-->
+<!--                            <outputDirectory>${basedir}\src\main\resources\static</outputDirectory>-->
+<!--                            <resources>-->
+<!--                                <resource>-->
+<!--                                    &lt;!&ndash;前端代码地址&ndash;&gt;-->
+<!--                                    <directory>${basedir}/../frontend/dist</directory>-->
+<!--                                </resource>-->
+<!--                            </resources>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 

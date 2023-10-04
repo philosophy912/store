@@ -1,7 +1,10 @@
+/**
+ * @author lizhe
+ * @date 2020/3/11 9:21
+ **/
 package com.sophia.store.entity.po;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -20,10 +23,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author lizhe
- * @date 2020/3/11 9:21
- **/
+
 @Setter
 @Getter
 @Entity
@@ -33,20 +33,15 @@ import java.util.Set;
 public class Basic implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @ApiModelProperty(value = "编号")
     private Integer id;
     @Column(name = "name", nullable = false)
-    @ApiModelProperty(value = "名字")
     private String name;
     @Column(name = "unit")
-    @ApiModelProperty(value = "单位")
     private String unit;
     @Column(name = "capacity")
-    @ApiModelProperty(value = "容量")
     private Integer capacity;
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "basic_id")
-    @ApiModelProperty(value = "包含的原材料")
     private Set<MaterialFormula> materialFormulaSet = new HashSet<>();
 
 }

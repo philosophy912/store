@@ -57,7 +57,7 @@ public class CategoryServiceImpl extends BaseService implements CategoryService 
     @Override
     public CategoryVo addCategory(CategoryVo vo) {
         List<Category> categories = categoryDao.findByName(vo.getName());
-        if (categories.size() == 0) {
+        if (categories.isEmpty()) {
             Category category = new Category();
             category.setName(vo.getName());
             category.setNeedExpire(vo.getNeedExpire());
@@ -72,7 +72,7 @@ public class CategoryServiceImpl extends BaseService implements CategoryService 
         String name = vo.getName();
         log.debug("update category vo is {}", vo);
         List<Category> categories = categoryDao.findByName(name);
-        if (categories.size() > 0) {
+        if (!categories.isEmpty()) {
             // 根据vo查询category
             Optional<Category> optionalCategory = categoryDao.findById(vo.getId());
             Category category = optionalCategory.orElseGet(optionalCategory::get);

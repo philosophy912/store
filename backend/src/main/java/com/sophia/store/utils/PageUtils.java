@@ -1,10 +1,11 @@
-package com.sophia.store.utils;
-
-
 /**
  * @author lizhe
  * @date 2020/11/26 11:08
  **/
+package com.sophia.store.utils;
+
+
+
 public final class PageUtils {
 
     // totalPages

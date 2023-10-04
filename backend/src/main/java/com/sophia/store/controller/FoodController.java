@@ -5,13 +5,9 @@ import com.philosophy.base.util.StringsUtils;
 import com.sophia.store.entity.vo.FoodVo;
 import com.sophia.store.entity.vo.PageResponse;
 import com.sophia.store.entity.vo.Response;
-import com.sophia.store.log.Log;
 import com.sophia.store.service.FoodService;
 import com.sophia.store.utils.Constant;
 import com.sophia.store.utils.PageUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,19 +25,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/store/food")
 @Slf4j
-@Api(value = "耗材接口", tags = {"耗材管理"})
 public class FoodController {
     @Resource
     private FoodService foodService;
 
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    @ApiOperation(value = "分页查找耗材的列表")
-    public PageResponse fetchList(@ApiParam(value = "页数", required = true, example = "1") @RequestParam int page,
-                                  @ApiParam(value = "每页数量", required = true, example = "10") @RequestParam int limit,
-                                  @ApiParam(value = "查询的名字", example = "部门1") @RequestParam(required = false) String name,
-                                  @ApiParam(value = "排序方式", example = "+id/-id") @RequestParam(required = false) String sort,
-                                  @ApiParam(value = "分类选择", example = "分类选择") @RequestParam(required = false) Integer categoryId) {
+    public PageResponse fetchList(@RequestParam int page,
+                                  @RequestParam int limit,
+                                  @RequestParam(required = false) String name,
+                                  @RequestParam(required = false) String sort,
+                                  @RequestParam(required = false) Integer categoryId) {
         log.debug("categoryId = {}", categoryId);
         PageResponse response = new PageResponse();
         Pageable pageable;
@@ -57,16 +51,16 @@ public class FoodController {
         try {
             List<FoodVo> categoryVos = foodService.findFood(pageable, name, categoryId);
             long count;
-            if(StringsUtils.isEmpty(name) && categoryId == null) {
+            if (StringsUtils.isEmpty(name) && categoryId == null) {
                 // 名字和分类都不存在
                 count = foodService.findAllFoodCount();
-            }else if(StringsUtils.isNotEmpty(name) && categoryId != null) {
+            } else if (StringsUtils.isNotEmpty(name) && categoryId != null) {
                 // 名字和分类都存在
                 count = foodService.findFoodCountByNameAndCategoryId("%" + name + "%", categoryId);
-            }else if(StringsUtils.isEmpty(name)){
+            } else if (StringsUtils.isEmpty(name)) {
                 // 仅分类存在
                 count = foodService.findFoodCountByCategoryId(categoryId);
-            }else {
+            } else {
                 // 仅名字存在
                 count = foodService.findFoodCountByName("%" + name + "%");
             }
@@ -84,8 +78,6 @@ public class FoodController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    @ApiOperation(value = "添加耗材", notes = "其中name和timestamp不能为空")
-    @Log("添加耗材")
     public Response create(@RequestBody FoodVo vo) {
         Response response = new Response();
         try {
@@ -101,8 +93,6 @@ public class FoodController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    @ApiOperation(value = "更新耗材", notes = "仅能更新耗材名称")
-    @Log("更新耗材")
     public Response update(@RequestBody FoodVo vo) {
         Response response = new Response();
         String name = vo.getName();
@@ -124,8 +114,6 @@ public class FoodController {
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    @ApiOperation(value = "删除耗材", notes = "删除耗材")
-    @Log("删除耗材")
     public Response delete(@RequestBody FoodVo vo) {
         Response response = new Response();
         String name = vo.getName();
