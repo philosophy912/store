@@ -10,7 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +32,7 @@ public class MaterialServiceImpl extends BaseService implements MaterialService 
 
     @Override
     public List<MaterialVo> findAll() {
-        List<MaterialVo> materialVos = new ArrayList<>();
+        List<MaterialVo> materialVos = new LinkedList<>();
         List<Material> materials = materialDao.findAll();
         materials.forEach(material -> materialVos.add(convert(material)));
         return materialVos;
@@ -40,10 +40,10 @@ public class MaterialServiceImpl extends BaseService implements MaterialService 
 
     @Override
     public List<MaterialVo> find(Pageable pageable, String name) {
-        List<MaterialVo> materialVos = new ArrayList<>();
+        List<MaterialVo> materialVos = new LinkedList<>();
         Page<Material> materials = materialDao.findAll((Specification<Material>) (root, query, criteriaBuilder) -> {
             // 1. 创建集合 存储查询条件
-            List<Predicate> queryList = new ArrayList<>();
+            List<Predicate> queryList = new LinkedList<>();
             // 2. 添加查询条件
             if (StringsUtils.isNotEmpty(name)) {
                 queryList.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));

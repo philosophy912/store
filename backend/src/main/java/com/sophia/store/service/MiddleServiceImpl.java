@@ -13,11 +13,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -31,7 +27,7 @@ public class MiddleServiceImpl extends BaseService implements MiddleService {
         log.debug("middle name is {}", name);
         vo.setName(name);
         vo.setUnit(middle.getUnit());
-        Set<FormulaVo> formulaVos = new HashSet<>();
+        Set<FormulaVo> formulaVos = new LinkedHashSet<>();
         Set<FormulaVo> materialFormulaVos = convertMaterialFormulaVo(middle.getMaterialFormulaSet());
         Set<FormulaVo> basicFormulaVos = convertBasicFormulaVo(middle.getBasicFormulaSet());
         formulaVos.addAll(materialFormulaVos);
@@ -50,7 +46,7 @@ public class MiddleServiceImpl extends BaseService implements MiddleService {
 
     @Override
     public List<MiddleVo> findAll() {
-        List<MiddleVo> middleVos = new ArrayList<>();
+        List<MiddleVo> middleVos = new LinkedList<>();
         List<Middle> middles = middleDao.findAll();
         middles.forEach(middle -> middleVos.add(convert(middle)));
         return middleVos;
@@ -58,10 +54,10 @@ public class MiddleServiceImpl extends BaseService implements MiddleService {
 
     @Override
     public List<MiddleVo> find(Pageable pageable, String name) {
-        List<MiddleVo> middleVos = new ArrayList<>();
+        List<MiddleVo> middleVos = new LinkedList<>();
         Page<Middle> middles = middleDao.findAll((Specification<Middle>) (root, query, criteriaBuilder) -> {
             // 1. 创建集合 存储查询条件
-            List<Predicate> queryList = new ArrayList<>();
+            List<Predicate> queryList = new LinkedList<>();
             // 2. 添加查询条件
             if (StringsUtils.isNotEmpty(name)) {
                 queryList.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));

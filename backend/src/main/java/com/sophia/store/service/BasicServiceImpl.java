@@ -12,7 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -44,7 +44,7 @@ public class BasicServiceImpl extends BaseService implements BasicService {
 
     @Override
     public List<BasicVo> findAll() {
-        List<BasicVo> basicVos = new ArrayList<>();
+        List<BasicVo> basicVos = new LinkedList<>();
         List<Basic> basics = basicDao.findAll();
         basics.forEach(basic -> basicVos.add(convert(basic)));
         return basicVos;
@@ -52,10 +52,10 @@ public class BasicServiceImpl extends BaseService implements BasicService {
 
     @Override
     public List<BasicVo> find(Pageable pageable, String name) {
-        List<BasicVo> basicVos = new ArrayList<>();
+        List<BasicVo> basicVos = new LinkedList<>();
         Page<Basic> basics = basicDao.findAll((Specification<Basic>) (root, query, criteriaBuilder) -> {
             // 1. 创建集合 存储查询条件
-            List<Predicate> queryList = new ArrayList<>();
+            List<Predicate> queryList = new LinkedList<>();
             // 2. 添加查询条件
             if (StringsUtils.isNotEmpty(name)) {
                 queryList.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));

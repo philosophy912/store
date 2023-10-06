@@ -41,6 +41,11 @@
           <span class="link-type" @click="handleUpdate(row)">{{ parseNumber(row.price) }} 元</span>
         </template>
       </el-table-column>
+      <el-table-column label="单位价格" min-width="150px" align="center">
+        <template slot-scope="{row}">
+          <span class="link-type" @click="handleUpdate(row)">{{ parseNumber(row.pricePerUnit) }} 元/{{ row.unit }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">编辑</el-button>

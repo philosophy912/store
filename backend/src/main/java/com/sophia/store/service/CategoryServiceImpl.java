@@ -10,7 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +21,7 @@ public class CategoryServiceImpl extends BaseService implements CategoryService 
 
     @Override
     public List<CategoryVo> findAllCategories() {
-        List<CategoryVo> categoryVos = new ArrayList<>();
+        List<CategoryVo> categoryVos = new LinkedList<>();
         List<Category> categories = categoryDao.findAll();
         categories.forEach(category -> categoryVos.add(convertCategoryWithoutFood(category)));
         return categoryVos;
@@ -29,10 +29,10 @@ public class CategoryServiceImpl extends BaseService implements CategoryService 
 
     @Override
     public List<CategoryVo> findCategory(Pageable pageable, String name) {
-        List<CategoryVo> categoryVos = new ArrayList<>();
+        List<CategoryVo> categoryVos = new LinkedList<>();
         Page<Category> categories = categoryDao.findAll((Specification<Category>) (root, query, criteriaBuilder) -> {
             // 1. 创建集合 存储查询条件
-            List<Predicate> queryList = new ArrayList<>();
+            List<Predicate> queryList = new LinkedList<>();
             // 2. 添加查询条件
             if (StringsUtils.isNotEmpty(name)) {
                 queryList.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
@@ -111,7 +111,7 @@ public class CategoryServiceImpl extends BaseService implements CategoryService 
     public List<CategoryVo> findCategoryByName(CategoryVo vo) {
         String name = vo.getName();
         List<Category> categories = categoryDao.findByName(name);
-        List<CategoryVo> categoryVos = new ArrayList<>();
+        List<CategoryVo> categoryVos = new LinkedList<>();
         categories.forEach(category -> categoryVos.add(convertCategory(category)));
         return categoryVos;
     }

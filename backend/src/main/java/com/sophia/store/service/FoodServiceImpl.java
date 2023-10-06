@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,11 +27,11 @@ public class FoodServiceImpl extends BaseService implements FoodService {
 
     @Override
     public List<FoodVo> findFood(Pageable pageable, String name, Integer categoryId) {
-        List<FoodVo> foodVos = new ArrayList<>();
+        List<FoodVo> foodVos = new LinkedList<>();
         log.debug("categoryId = {}", categoryId);
         Page<Food> foods = foodDao.findAll((Specification<Food>) (root, query, criteriaBuilder) -> {
             // 1. 创建集合 存储查询条件
-            List<Predicate> queryList = new ArrayList<>();
+            List<Predicate> queryList = new LinkedList<>();
             // 2. 添加查询条件
             if (StringsUtils.isNotEmpty(name)) {
                 queryList.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
